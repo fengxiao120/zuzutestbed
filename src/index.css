@@ -1,0 +1,72 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  color: #333;
+  line-height: 1.428571429;
+}
+html{
+	font-size:12px;
+}
+
+.App i.arrow{
+  border: solid black;
+  border-width: 0 1px 1px 0;
+  display: inline-block;
+  padding: 3px;  
+}
+
+.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
+.left {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+}
+
+.up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}
+
+.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
+.time-dropdown {
+  box-sizing: border-box;
+  vertical-align: top;
+  width: 160px;
+  position: relative;
+  border: 1px solid #cccccc;
+  padding: 2px 2px 2px 4px;
+  margin: 8px 0px;
+}
+.time-dropdown-content {
+  box-sizing: border-box;
+  display: none;
+  position: absolute;
+  left:-1px;
+  top:21px;
+  background: white;
+  border: 1px solid #ccc;
+  z-index: 1;
+}
+
+
+.table-top-header{
+  background: #f9f9f9;
+  height: 33px;
+  font-family: Helvetica Neue;
+  font-size: 25px;
+  line-height: 33px;
+  color: #333333; 
+  margin: 0;
+}
+
+.time-dropdown:hover .time-dropdown-content {
+  display: block;
+}

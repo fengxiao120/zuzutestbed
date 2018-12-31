@@ -1,0 +1,26 @@
+.d-r-p *{
+	font-family: sans-serif;
+	box-sizing: border-box;
+}
+
+
+.d-r-p .normal{
+	border:1px solid white;
+}
+
+.d-r-p .disabled{
+	background: white;
+	border: 1px solid white;
+	color: rgb(0,0,0,0.4);
+}
+
+.d-r-p .hovered{
+	background: #fdebe2;
+	border:1px solid #fdebe2;
+}
+
+.d-r-p .selected{
+	background: #f36e33;
+	border: 1px solid #f36e33;
+	color: white
+}

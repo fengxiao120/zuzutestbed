@@ -1,0 +1,8 @@
+.row {
+	padding: 10px;
+	margin: 20px 0;
+	height: 80px;
+	line-height: 80px;
+	background: #eee;
+	display: flex;
+}
