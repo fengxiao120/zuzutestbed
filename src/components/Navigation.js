@@ -44,7 +44,7 @@ class Navigation extends React.Component {
     const { t } = this.props
     return (
       <div className={this.props.width===70?'nav-collapsed':'nav-expanded'}
-      style={{minHeight:1200, width:this.props.width, background:'#eae9e7', display:'inline-block'}}>
+      style={{width:this.props.width, background:'#eae9e7'}}>
         <div className='nav-item' style={{height:140, borderBottom:'#f4703269 2px solid', lineHeight:'134px'}}>
           <div style={{textAlign:'center', width:39, display:'inline-block',marginLeft:15, verticalAlign:'top'}}>
             <i style={{fontSize:25}} className='inherit zuzu-icon-profile'></i>
@@ -157,7 +157,7 @@ class Navigation extends React.Component {
             </div>    
           </div>
         )}        
-        <div className='nav-item' style={{height:'400px'}}></div>
+        <div className='nav-item' style={{height:'100px'}}></div>
         <div className='nav-handle' onClick={this.props.toggleWidth}
         style={{position:'fixed', left:this.props.width - 1, top: '48.5vh', width:14, height:63, 
         borderWidth: '1px 1px 1px 1px', borderRadius: '0 5px 5px 0', zIndex:2,

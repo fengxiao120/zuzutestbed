@@ -1,8 +1,9 @@
 .row {
-	padding: 10px;
-	margin: 20px 0;
-	height: 80px;
-	line-height: 80px;
-	background: #eee;
+	height: 130px;
+	line-height: 130px;
 	display: flex;
+}
+
+.App #calendar-view-container::-webkit-scrollbar{
+    -webkit-appearance: none;
 }

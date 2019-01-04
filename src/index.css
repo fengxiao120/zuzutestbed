@@ -70,3 +70,8 @@ html{
 .time-dropdown:hover .time-dropdown-content {
   display: block;
 }
+
+.page-top-header{
+  text-align: left;
+  font-size: 36px;
+}

@@ -1,0 +1,18 @@
+.revenue-management-rules .header-tab{
+	color: rgba(0, 0, 0, 0.54); 
+	height: 32px;
+	line-height: 32px;
+	font-size:14px; 
+	padding: 0 16px;
+	cursor: pointer;
+}
+
+.revenue-management-rules .header-tab.in-focus{
+	position: relative;
+	top: -3px;
+	height: 38px;
+	line-height: 38px;
+	background: #337ab7;
+	border-radius: 18.5px;
+	color: rgba(255, 255, 255, 0.96);
+}
