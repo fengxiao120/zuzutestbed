@@ -16,3 +16,120 @@
 	border-radius: 18.5px;
 	color: rgba(255, 255, 255, 0.96);
 }
+
+.revenue-management-rules .radio{
+	width: 20px;
+	height: 20px;
+	border-radius: 10px;
+	border: 2px solid #337ab7;
+	box-sizing: border-box;
+	line-height: 20px;
+	text-align: center;
+	opacity: 0.54;
+	cursor: pointer;
+}
+
+.revenue-management-rules .radio .radio-inner{
+	display: none;
+}
+
+.revenue-management-rules .radio.active{
+	opacity: 1;
+}
+
+.revenue-management-rules .radio.active .radio-inner{
+	width: 10px;
+	height: 10px;
+	border-radius: 5px;
+	background: #337ab7;
+	display: inline-block;
+}
+
+.revenue-management-rules input.rules-table-cell{
+	background: transparent;
+}
+
+.revenue-management-rules input.rules-table-cell:focus{
+	border: 1px solid #f36e33 !important;
+	background: #eff7ff;
+	font-size: 18px !important;
+	outline: none;
+}
+
+.rules-table-cell-hook{
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.rules-table-cell:focus + .rules-table-cell-hook::before{
+	position: relative;
+	right: 12px;
+	top: 10px;
+	content: '%';
+	color: #ccc;
+	z-index: 2;
+}
+
+.revenue-management-rules .percentage-selector input:focus{
+	border: 1px solid #f36e33 !important;
+	outline: none;
+}
+
+.revenue-management-rules .row-name{
+	position: relative;
+    cursor: pointer;
+    font-size: 12px;
+    color: #333333;
+	width: 70px;
+	height: 27px; 
+	line-height: 27px; 
+	text-align: center;
+	border-radius: 2px;
+}
+
+.revenue-management-rules{
+	font-size: 12px;
+}
+
+.revenue-management-rules .row-name.editing{
+	background: #eff7ff;
+	color: #337ab7;
+}
+
+.revenue-management-rules .row-name.editing:hover{
+	background: #337ab7;
+	color: white;
+}
+
+.revenue-management-rules i.zuzu-icon-cog:before{
+	font-size: 16px;
+}
+
+.revenue-management-rules .calendar-view-container::-webkit-scrollbar{
+    -webkit-appearance: none;
+}
+
+.revenue-management-rules .calendar-view-container::-webkit-scrollbar:vertical {
+    width: 0;
+}
+.revenue-management-rules .calendar-view-container::-webkit-scrollbar:horizontal {
+    height: 0;
+}
+
+.sliderr{
+	background: red;
+	margin-left: 0;
+	transition: margin-left 1s;
+}
+.slider-container{
+	background: red;
+	transition: background 1s;
+}
+.slider-container:hover{
+	background: green;
+}
+.slider-container:hover .sliderr{
+	background: green;
+	margin-left: 40px;
+}

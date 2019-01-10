@@ -28,7 +28,8 @@
     "react-scripts": "1.1.5",
     "react-select": "^2.1.2",
     "react-table": "^6.8.6",
-    "react-toasts": "^2.0.13"
+    "react-toasts": "^2.0.13",
+    "webfontloader": "^1.6.28"
   },
   "scripts": {
     "start": "react-scripts start",

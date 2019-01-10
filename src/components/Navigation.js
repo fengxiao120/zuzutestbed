@@ -29,7 +29,7 @@ class Navigation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      expanded: false,
+      expanded: true,
       showSubitem: props.root,
     }
   }
@@ -154,10 +154,10 @@ class Navigation extends React.Component {
                   {child.name}
                 </div>)
               }
-            </div>    
+            </div>
           </div>
         )}        
-        <div className='nav-item' style={{height:'100px'}}></div>
+        <div className='nav-item' style={{height:'calc( 100vh - 804px )'}}></div>
         <div className='nav-handle' onClick={this.props.toggleWidth}
         style={{position:'fixed', left:this.props.width - 1, top: '48.5vh', width:14, height:63, 
         borderWidth: '1px 1px 1px 1px', borderRadius: '0 5px 5px 0', zIndex:2,
