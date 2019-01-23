@@ -1,93 +1,149 @@
 import React from "react";
 import Navigation from '../components/Navigation'
+import DeletePopup from '../components/DeletePopup'
 
 import './RevenueManagementRules.css';
 import RulesEngineApi from '../api/RulesEngineApi';
+import Color from '../Color'
 
 const t = str => str
 
-const Color = {
-  background: '#f9f9f9',
-  themeBlue: '#337ab7',
-  themeBlueLight: '#eff7ff',
-  orange: '#f36e33',
-  red: '#c92d28',
-}
-
-const ToastStore = {}
 const days = [ 'Sun', 'Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat']
 const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
-class Slider extends React.Component {
-  state = {
-    offset: 0,
-    changing: false,
-    previousOffset: 0,
+class EditableRange extends React.Component {
+  state = {  
+    low: this.props.range.low,
+    high: this.props.range.high,
   }
 
-  onMouseDown = ( e ) => {
-    this.setState({ changing: true, previousOffset: this.state.offset })
-  }
- 
-  onMouseMove = ( e ) => {
-    if(this.state.changing)
-      this.setState({offset: Math.min(Math.max(4 - e.target.offsetLeft - e.nativeEvent.offsetX, 0), 100)})
-  }
- 
-  onMouseUp = () => {
-    this.setState({ changing: false})
+  componentWillReceiveProps = (nextProps) => {
+    this.setState({ low: nextProps.range.low, high: nextProps.range.high })
   }
 
-  onMouseOut = () => {
-    if(this.state.changing)
-      this.setState({ offset: this.state.previousOffset, changing: false})
-  }  
+  updateRowName = (e, high_or_low) => {
+    if( high_or_low=='high' )
+      this.setState({ high: parseInt(e.target.value) || '' })
+    else if( high_or_low=='low')
+      this.setState({ low: parseInt(e.target.value) || '' })
+  }
 
-  render(){
+  validate = ( ) => {
+    const lowBound = isNaN(this.props.lowBound)?3:this.props.lowBound
+    if( this.state.low >= lowBound && this.state.low < this.props.highBound ){
+      if( !this.props.single ){
+        if( this.state.high <= this.props.highBound && this.state.high > this.state.low ){
+          console.log('wtf1')
+          return true
+        }
+      }
+      else{
+        console.log('wtf2')
+        return true
+      }      
+    }
+      
+    alert('Please enter an valid range')
+    return false
+  }
+
+  confirmUpdatingRowName = () => {
+    if(this.validate())
+      this.props.onConfirm(this.props.index, this.state)
+  }
+
+  cancelUpdatingRowName = () => {
+    this.setState({ low: this.props.range.low, high: this.props.range.high })
+    this.props.onCancel()
+  }
+
+  render() {
+    console.log('EditableRange rendering')
+    console.log(this.props.lowBound)
+    console.log(this.props.highBound)
+    console.log(this.props.lowBound &&  !(this.props.header && this.props.lowBound == 3) &&  ('>' + (this.props.lowBound - 1) + '%'))
     return (
-      <div
-        style={{position:'absolute', zIndex:3, left: 0, top: '-80%', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.5)', alignItems:'center',
-        width:162, height:54, background: Color.themeBlueLight, padding:'25px 26px 20px', boxSizing:'border-box', display:'flex'}}>
-        <div style={{width:10, height:10, borderRadius:5, boxSizing:'border-box', 
-          background: '#86b7e8', border:'1px solid', borderColor: '#0163c5'}}></div>
-        <div style={{width:90, height:0, border:'1px dashed', borderColor: '#0163c5'}}></div>
-        <div
-          style={{width:10, height:10, borderRadius:5, boxSizing:'border-box',background: '#86b7e8', position:'relative'}}>
-          <div 
-            onMouseUp={this.onMouseUp}
-            onMouseDown={this.onMouseDown}
-            onMouseOut={this.onMouseUp}
-            onMouseMove={this.onMouseMove}
-            style={{width:18, height:18, top: -4, left: -4 - this.state.offset, lineHeight:'14px', fontSize:14, textAlign:'center',
-            borderRadius:9, boxSizing:'border-box',background: '#ffffff', position:'absolute', border:'1px solid #0163c5', cursor:'pointer'}}>
-            &#9666;&#9656;
+      <div onClick={(e)=>e.stopPropagation()} style={{background:Color.themeBlueLight, position: 'absolute', zIndex:2, left:-4, top:-12,  
+        minWidth:80, boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.5)', padding:6, borderRadius:2}}>
+        <div style={{display:'flex', color:'#0079cc',  justifyContent:'center', padding:'2.5px 0',
+          fontSize:10, lineHeight:'1', opacity: 0.75}}>
+          { !this.props.header && <div style={{width:12, paddingRight:4, }}>&nbsp;</div> }
+          <div style={{width:50, textAlign:'center',}}>
+            { this.props.lowBound?'>' + (this.props.lowBound - 1) + '%':''}
           </div>
-          <div style={{position:'absolute', top: - 18, left: - 5 - this.state.offset, fontSize:14, lineHeight:'14px'}}>
-            {this.state.offset}%
-          </div>          
-        </div>        
+          { !this.props.single && <div style={{width:10, }}>&nbsp;</div> }
+          { !this.props.single && <div style={{width:50, textAlign:'center',}}>{this.props.highBound!=100 &&('<' + (this.props.highBound + 1) + '%')}</div> }
+        </div>
+        <div style={{display:'flex', height:32, lineHeight:'32px', justifyContent:'center'}}>
+          { !this.props.header && 
+            <div style={{width:12, paddingRight:4 , textAlign:'right', fontSize:12, color:'#65646d'}}>{this.props.index + 1}</div> 
+          }
+          <input style={{width:20, padding:0, borderRadius:4, width:48, height:27, boxSizing:'content-box',
+            fontSize: 18, border:'1px solid #ebebeb', textAlign:'center'}}
+            disabled={!this.props.lowBound || (this.props.header && this.props.lowBound == 3) }
+            value={this.state.low} 
+            onChange={(e)=>this.updateRowName(e, 'low')}
+            />
+          { !this.props.single && <div style={{width:10, textAlign:'center', color: Color.black1}}>-</div> }
+          { !this.props.single && <input style={{width:20, padding:0, borderRadius:4, width:48, height:27, boxSizing:'content-box',
+            fontSize: 18, border:'1px solid #ebebeb', textAlign:'center'}}
+            disabled={this.props.highBound==100}
+            value={this.state.high}
+            onChange={(e)=>this.updateRowName(e, 'high')}
+            />}
+        </div>
+        <div style={{display:'flex', justifyContent:'space-between', color: Color.black1, lineHeight:'12px',
+          padding: '5px 6px 0', borderTop:'1px solid #dedede'}}>
+          <div onClick={this.cancelUpdatingRowName} className='clickable' >
+          {t('Cancel')}
+          </div>
+          <div onClick={this.confirmUpdatingRowName}
+            className='clickable'
+            style={{color: Color.themeBlue}}>
+          {t('Ok')}
+          </div>
+        </div>
       </div>
-    )
+    );
   }
 }
 
-class RevenueManagementRules extends React.Component {
+class RulesEngine extends React.Component {
   state = {
-    year: 2019,
-    month: 0,
-    last_request_year: 2019,
-    last_request_month: 0,
+    show_popup: false,
+    show_revenue_management_rules: false,
+
+    year: new Date().getFullYear(),
+    month: new Date().getMonth(),
+    last_request_year: new Date().getFullYear(),
+    last_request_month: new Date().getMonth(),
+    month_in_display1: new Date().getMonth(),
+    month_in_display2: new Date().getMonth(),
+    month_in_display3: new Date().getMonth(),
+    month_in_display4: new Date().getMonth(),
+    month_in_display5: new Date().getMonth(),
+    table_collapsed1: true,
+    table_collapsed2: true,
+    table_collapsed3: true,
+    table_collapsed4: true,
     loading: false,
     all_room_types: true,
     all_rate_plans: true,
-    price_not_market_price: true,
+    price_not_market_price: false,
+    percentage_not_number: false,
     on: true,
-    calendar_scroll_distance1: 0,
-    calendar_scroll_distance2: 0,
     rowNamesEdit: false,
     newRowBeingClicked: false,
     visibleRowNameIndex: 3,
-    headers: ['Same day bookings', 'Last-minute (1-2 days)', '3-6 days', '7-13 days', '14-30 days', '31-60 days', '60+ days'],
+
+    headers: ['Same day bookings', 'Last-minute (1-2 days)', 
+    {low:3, high:6},
+    {low:7, high:13},
+    {low:14, high:30},
+    {low:31, high:60},
+    {low:60}],
+
     rowNames: [{low: 0, high: 55},  
     {low: 56, high: 90}, 
     {low: 91, high: 94},  
@@ -107,6 +163,12 @@ class RevenueManagementRules extends React.Component {
   }
 
   loading = false
+  calendar_lengths_list1 = []
+  calendar_scroll_distance1 = 0
+  calendar_scroll_distance2 = 0
+  calendar_scroll_distance3 = 0
+  calendar_scroll_distance4 = 0
+  calendar_scroll_distance5 = 0
 
   componentDidMount = () => { 
     window.addEventListener('click', this.collapsePercentageSelector)
@@ -118,8 +180,20 @@ class RevenueManagementRules extends React.Component {
   }
 
   collapsePercentageSelector = (event) => {
-    if(!event.target.matches('.percentage-selector, .percentage-selector *'))
-      this.setState({visibleRowNameIndex: -1})
+    if(!event || !event.target.matches('.edtiable-header, .edtiable-header *, .editable-row-names *'))
+      this.setState({visibleRowNameIndex: -1, visibleHeaderIndex: -1})
+  }
+
+  whichMonthToDisplay = ( table_index) => {
+    const day_count = this['calendar_scroll_distance' + table_index]/78;
+
+    for(let i=0; i<this['calendar_lengths_list' + table_index].length; i++){
+      if( day_count < this['calendar_lengths_list' + table_index][i] ){
+        if(i!=this.state['month_in_display' + table_index])
+          this.setState({['month_in_display' + table_index]: i})
+        break
+      }
+    }
   }
 
   getRulesEngineData = () => {
@@ -131,6 +205,7 @@ class RevenueManagementRules extends React.Component {
     .then(response => {
       console.log(response)
       if(response.success){
+        this.calendar_lengths_list1.push( (this.calendar_lengths_list1[this.calendar_lengths_list1.length - 1] || 0 ) + response.monthly_market_pricing_data.data.length)
         this.setState({
           last_request_month: this.state.last_request_month + 1,
           loading: false,
@@ -140,7 +215,7 @@ class RevenueManagementRules extends React.Component {
         }, ()=>this.loading = false )  
       } else {
         this.setState({loading:false})  
-        ToastStore.error(t('There is some error'), 5000, 'update-error') 
+        //ToastStore.error(t('There is some error'), 5000, 'update-error') 
         console.log(response)     
       }
     })
@@ -148,7 +223,7 @@ class RevenueManagementRules extends React.Component {
       this.loading = false
       this.setState({loading:false})
       console.log(error)
-      ToastStore.error(t('There is some error'), 5000, 'update-error')
+      //ToastStore.error(t('There is some error'), 5000, 'update-error')
     })    
   } 
 
@@ -158,6 +233,17 @@ class RevenueManagementRules extends React.Component {
 
   onAvgChange = ( e ) => {
     this.setState({ avg_option:e.target.getAttribute('name') })
+  }
+
+  addNewHeader = ( ) => {
+    const new_headers = this.state.headers.slice()
+    new_headers[new_headers.length-1].low = new_headers[new_headers.length-1].low + 1
+    new_headers[new_headers.length-1].high = new_headers[new_headers.length-1].low + 1
+
+    new_headers.push({low: new_headers[new_headers.length - 1].high})
+
+    const new_data = this.state.data.slice().map(row=>row.concat(0))
+    this.setState({ headers: new_headers, newHeaderBeingClicked: false, data: new_data })    
   }
 
   addNewRow = (  ) => {
@@ -181,18 +267,67 @@ class RevenueManagementRules extends React.Component {
     this.setState({newRowBeingClicked: false, rowNames:new_label, data: this.state.data.concat([[0,0,0,0,0,0,0]])})
   }
 
-  updateRowName = (e, index, high_or_low) => {
+  deleteRowOrColumn = () => {
+    if(this.state.delete_row_name_index)
+      this.deleteRow()
+    else if(this.state.delete_header_index)
+      this.deleteHeader()
+  }
+
+  deleteRow = () => {
     const new_row_names = this.state.rowNames.slice()
-    if(high_or_low=='high'){
-      const upper_bound = this.state.rowNames[index+1]?this.state.rowNames[index+1].high:101
-      if(parseInt(e.target.value)>new_row_names[index].low && parseInt(e.target.value)<upper_bound)
-        new_row_names[index].high = e.target.value
+    const new_data = this.state.data.slice()
+    new_data.splice(this.state.delete_row_name_index, 1)
+    if(this.state.delete_row_name_index == this.state.rowNames.length - 1){
+      new_row_names[this.state.delete_row_name_index - 1].high = 100
+      new_row_names.pop()
     } else {
-      const lower_bound = this.state.rowNames[index-1]?this.state.rowNames[index-1].low:0
-      if(parseInt(e.target.value)<new_row_names[index].high && parseInt(e.target.value)>lower_bound)
-        new_row_names[index].low = e.target.value
+      new_row_names[this.state.delete_row_name_index - 1].high = new_row_names[this.state.delete_row_name_index].high
+      new_row_names.splice(this.state.delete_row_name_index, 1)
     }
-    this.setState({rowNames: new_row_names})
+    this.setState({ rowNames: new_row_names, show_popup:false, data: new_data, delete_row_name_index: 0 })
+  }
+
+  onRowNameChange = ( index, range ) => {
+    const new_row_names = this.state.rowNames.slice()
+    new_row_names[index] = range
+    if(index)
+      new_row_names[index - 1].high = range.low - 1
+    if(index < this.state.rowNames.length - 1)
+      new_row_names[index + 1].low = range.high + 1
+    this.setState({ rowNames: new_row_names, visibleRowNameIndex: -1 })
+  }
+
+  deleteHeader = () => {
+    const delete_index = this.state.delete_header_index
+    const new_headers = this.state.headers.slice()
+    const new_data = this.state.data.slice().map( row => {
+      row.splice(delete_index, 1)
+      return row
+    })
+
+    if(delete_index == this.state.headers.length - 1){
+      new_headers[delete_index - 1].high = null
+      new_headers[delete_index - 1].low -= 1
+      new_headers.pop()
+    } else {
+      new_headers[delete_index - 1].high = new_headers[delete_index].high
+      new_headers.splice(delete_index, 1)
+    }
+    this.setState({ headers: new_headers, show_popup:false, data: new_data, delete_header_index: 0 })
+  }
+
+  onHeaderChange = ( index, range ) => {
+    const new_headers = this.state.headers.slice()
+    const offset1 =  index == this.state.headers.length - 1 ? 0:1
+    const offset2 =  index == this.state.headers.length - 2 ? 0:1
+
+    new_headers[index] = range
+    if(index>2)
+      new_headers[index - 1].high = range.low - offset1
+    if(index<this.state.headers.length - 1)
+      new_headers[index + 1].low = range.high + offset2
+    this.setState({ headers: new_headers, visibleHeaderIndex: -1 })
   }
 
   updateCell = (e, row_index, col_index) => {
@@ -208,29 +343,29 @@ class RevenueManagementRules extends React.Component {
     } 
   }
 
-  scrollLeft = (index) => {
+  scrollLeft = (table_index) => {
     console.log('scrollLeft is called')
-    this.setLeftInterval = setInterval(()=>this.scrollLeftDirtyWork(index), 16)
+    this.setLeftInterval = setInterval(()=>this.scrollLeftDirtyWork(table_index), 16)
   }
 
-  scrollLeftDirtyWork = (index) => {
-    console.log('scrollLeftDirtyWork is called:', document.getElementById('calendar-view-container' + index).scrollLeft)
-    document.getElementById('calendar-view-container' + index).scrollBy(-10,0)
-    this.setState({['calendar_scroll_distance' + index]: document.getElementById('calendar-view-container' + index).scrollLeft})
+  scrollLeftDirtyWork = (table_index) => {
+    console.log('scrollLeftDirtyWork is called:', document.getElementById('calendar-view-container' + table_index).scrollLeft)
+    document.getElementById('calendar-view-container' + table_index).scrollBy(-16,0)
+    this['calendar_scroll_distance' + table_index] = document.getElementById('calendar-view-container' + table_index).scrollLeft
+    this.whichMonthToDisplay(table_index)
   }
 
-  scrollRight = (index) => {
+  scrollRight = (table_index) => {
     console.log('scrollRight is called')
-    this.setRightInterval = setInterval(()=>this.scrollRightDirtyWork(index), 16)
+    this.setRightInterval = setInterval(()=>this.scrollRightDirtyWork(table_index), 16)
   }
 
-  scrollRightDirtyWork = (index) => {
-    document.getElementById('calendar-view-container' + index).scrollBy(10,0)
-    console.log('scrollRightDirtyWork is called, scrollLeft:', document.getElementById('calendar-view-container' + index).scrollLeft)
-    console.log('scrollRightDirtyWork is called, clientWidth:', document.getElementById('calendar-view' + index).clientWidth)    
-    this.setState({['calendar_scroll_distance' + index]: document.getElementById('calendar-view' + index).scrollLeft})
+  scrollRightDirtyWork = (table_index) => {
+    document.getElementById('calendar-view-container' + table_index).scrollBy(16,0)
+    this['calendar_scroll_distance' + table_index] = document.getElementById('calendar-view-container' + table_index).scrollLeft
+    this.whichMonthToDisplay(table_index)
     if( !this.loading && 
-      document.getElementById('calendar-view' + index).clientWidth - document.getElementById('calendar-view-container' + index).scrollLeft < 78*5 + document.getElementById('calendar-view-container' + index).clientWidth){
+      document.getElementById('calendar-view' + table_index).clientWidth - this['calendar_scroll_distance' + table_index] < 78*5 + document.getElementById('calendar-view-container' + table_index).clientWidth){
       this.getRulesEngineData()
     }
   }
@@ -246,6 +381,7 @@ class RevenueManagementRules extends React.Component {
   }  
 
   render() {
+    console.log('rendering')
     return (
     <div style={{display:'flex'}}>
     	<Navigation
@@ -262,15 +398,10 @@ class RevenueManagementRules extends React.Component {
           background:'#def', fontFamily: "Raleway Webfont",}}>
           This is R&A
   			</div>
+
         <div class="page-top-header" style={{padding:'40px 30px 10px', fontFamily:'Helvetica, sans-serif'}}>
           {t('Revenue management engine')}
         </div>           
-
-        <div class='slider-container' style={{width:80, margin:20, borderRadius:25, height:40, padding:10}}>
-          <div class='sliderr'
-            style={{width:40, height:40, background:'blue', borderRadius:20}}>
-          </div>
-        </div>
 
         <div className='options1'
           style={{display:'flex', padding:'0 30px 20px', alignItems:'center', flexWrap:'wrap'}}>
@@ -316,6 +447,11 @@ class RevenueManagementRules extends React.Component {
 
         </div>
 
+
+
+
+
+
         <div style={{background: Color.background}}>
           <div style={{color:'#333333', fontSize:18, padding:'23px 30px 17px', }}>
             {t('Market pricing')}
@@ -327,17 +463,15 @@ class RevenueManagementRules extends React.Component {
           </div>
         </div>
 
+        <div style={{display:'flex', overflow: 'hidden', position:'relative'}}>
+          <div style={{position:'absolute', left:240, top:5, textAlign:'right', 
+            width:72, background: '#f9f9f9', fontSize:12,  zIndex:100}}>
+            {mon[new Date(this.state.year, this.state.month_in_display1, 1).getMonth()]} {new Date(this.state.year, this.state.month_in_display1, 1).getFullYear()}
+          </div>      
+          <img style={{color: '#ebebeb', position:'absolute', left:230, top: 42, display: this.state.table_collapsed1?'block':'none'}} 
+            src={require('../img/collapsed-divider.svg')} />
 
-
-
-
-
-
-
-
-
-        <div style={{display:'flex', overflow: 'hidden'}}>
-          <div style={{minWidth:232, textAlign:'right',}}>
+          <div style={{width:240,textAlign:'right',}}>
             <div style={{height:60, background:'#f9f9f9'}}>
               <div onMouseOver={()=>this.scrollLeft(1)} onMouseOut={()=>this.onMouseOutLeft(1)}
                 style={{height:14, width:14, display:'inline-block', marginRight:20, 
@@ -345,52 +479,73 @@ class RevenueManagementRules extends React.Component {
                 <i className="arrow left" style={{ borderColor: 'black', width:7, height:7, padding:0, 
                   borderWidth:'0 2px 2px 0', left:0, top:-1, position:'relative'}}/>
               </div> 
-              <div style={{borderRight:'1px solid #dedede', height:24}}>&nbsp;</div>           
+              <div style={{borderRight:'1px solid #c0c0c0', height:24, textAlign:'left', paddingLeft: 34}}>
+                <span style={{cursor:'pointer', color:'#4e4c5b'}}
+                  onClick={()=>this.setState({table_collapsed1: !this.state.table_collapsed1})}>
+                  <span style={{fontSize:8, display:'inline-block', width:16,
+                    transform:this.state.table_collapsed1?'scale(1, 1.6)': 'scale(1.8, 1) translateY(-1px)' }}>
+                    {this.state.table_collapsed1?String.fromCharCode(9658):String.fromCharCode(9660)}
+                  </span>           
+                  { this.state.table_collapsed1?t('Show all hotels'):
+                    t('Hide all hotels')}
+                </span>              
+              </div>           
             </div>
-            <div style={{marginLeft: 30, lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 1</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 2</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 3</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 4</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 5</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 6</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 7</div>              
-            <div style={{marginLeft: 30,  lineHeight:'16px', textAlign: 'left', padding:'5px 20px',
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>{t('Mean excluding highest and lowest')}</div>              
+            {  !this.state.table_collapsed1 && ['host name 1', 'host name 2', 'host name 3', 'host name 4',
+               'host name 5', 'host name 6', 'host name 7'].map( item => 
+                <div style={{marginLeft: 30, lineHeight:'16px', textAlign: 'left', padding:'8px 20px',
+                  borderBottom:'1px solid #ebebeb', borderRight:'1px solid #c0c0c0'}}>
+                  {item}
+                </div>                
+               )
+            }        
+            {  this.state.table_collapsed1 && 
+                <div style={{marginLeft: 30, lineHeight:'16px', textAlign: 'left', padding:'8px 20px',
+                  borderBottom:'1px solid #ebebeb', borderRight:'1px solid white'}}>
+                  &nbsp;
+                </div>                
+            }               
+            <div style={{marginLeft: 30, height:32, lineHeight:'16px', textAlign: 'left', padding:'6px 20px',
+              borderBottom:'1px solid #ebebeb', borderRight:'1px solid #c0c0c0'}}>
+              {t('Mean excluding highest and lowest')}
+            </div>                
           </div>
+
           <div id='calendar-view-container1' className='calendar-view-container'
-            style={{width: 'calc( 100% - 276px )', position:'relative', display: 'flex', overflow:'auto'}}>
-              <div style={{position:'absolute', left:0, top:5, textAlign:'right', 
-                width:72, background: '#f9f9f9',
-                fontSize:12, color:Color.themeBlue, zIndex:100}}>
-                {mon[new Date(2019, this.state.calendar_scroll_distance1>78*31?1:0, 1).getMonth()]} 
-              </div>              
+            style={{width: 'calc( 100% - 284px )', display: 'flex', overflow:'hidden'}}>            
             <div id='calendar-view1' className='calendar-view' style={{display:'flex'}} >            
-            { this.state.market_pricing_data.map(month => month.data.map(  (day, index) => 
-                <div style={{minWidth:78}}>
+            { this.state.market_pricing_data.map(month => month.data.map( (day, index) => 
+                <div style={{minWidth:78,}}>
                   <div  style={{background:'#f9f9f9', height:60, display:'flex', flexDirection:'column-reverse'}}>
                     <div style={{textAlign:'right', paddingRight:6, fontSize:15, fontWeight:600,
-                      color:'#4d4d59',borderRight:'1px solid #dedede'}}>
+                      color:'#4d4d59',borderRight:'1px solid #ebebeb'}}>
                       {day.date}
                     </div>                  
                     <div style={{textAlign:'right', paddingRight:6, fontSize:12, color:'#4d4d59'}}>
                       {days[new Date(month.year, month.month - 1, day.date ).getDay()]} 
                     </div>
-                    <div style={{textAlign:'right', paddingRight:6, fontSize:12, color:Color.themeBlue, display:!index?'block':'none'}}>
-                      {mon[new Date(month.year, month.month - 1, day.date ).getMonth()]} 
+                    <div style={{textAlign:'right', paddingRight:6, fontSize:12, display:!index?'block':'none'}}>
+                      {mon[new Date(month.year, month.month - 1, day.date ).getMonth()]}&nbsp;
+                      {new Date(month.year, month.month - 1, day.date).getFullYear()}
                     </div>                    
                   </div>
-                  { day.values.map( (item, index) => 
-                    <div  style={{height:index+1==day.values.length?42:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                      &nbsp;
-                    </div> 
-                  )}                                                                                                            
+                  { this.state.table_collapsed1 &&  <div style={{height:33, 
+                    boxSizing:'border-box', padding:'5px 8px', width:78,
+                    border:'solid #ebebeb', borderWidth:'0 1px 1px 0', textAlign:'right'}}>
+                    &nbsp;
+                  </div> 
+                  }
+                  { !this.state.table_collapsed1 && day.values.map( (item, index) => 
+                    <input value={item}
+                      style={{height:33, boxSizing:'border-box', padding:'5px 8px', width:78, fontSize: 13,
+                      border:'solid #ebebeb', borderWidth:'0 1px 1px 0', textAlign:'right'}}>
+                    </input> 
+                  )}   
+                  <div style={{height:45, boxSizing:'border-box', padding:'5px 8px', width:78, display: 'flex',
+                    flexDirection:'column-reverse', alignItems:'flex-end', fontSize: 13,
+                    border:'solid #ebebeb', borderWidth:'0 1px 1px 0'}}>
+                    {day.avg}
+                  </div>                                                                                                                         
                 </div>                
               ))
             }             
@@ -420,161 +575,253 @@ class RevenueManagementRules extends React.Component {
             {t('Market pricing with adjustments')}
           </div>
         </div>
-        <div style={{display:'flex', overflow: 'hidden'}}>
-          <div style={{minWidth:232, textAlign:'right',}}>
-            <div style={{height:60, background:'#f9f9f9'}}>
-              <div onMouseOver={()=>this.scrollLeft(2)} onMouseOut={()=>this.onMouseOutLeft(2)}
-                style={{height:14, width:14, display:'inline-block', marginRight:20, 
-                marginTop:24, cursor:'pointer'}}>
-                <i className="arrow left" style={{ borderColor: 'black', width:7, height:7, padding:0, 
-                  borderWidth:'0 2px 2px 0', left:0, top:-1, position:'relative'}}/>
-              </div> 
-              <div style={{borderRight:'1px solid #dedede', height:24}}>&nbsp;</div>           
+
+
+
+
+
+
+
+        <div style={{background:Color.background, padding: 25, minWidth:780}}>
+          <div style={{lineHeight:'34px', position:'relative'}}>
+            <div style={{fontSize:18}}>{t('Recommended sell rates')}</div>
+            <div style={{position: 'absolute', left:'50%', top:0,  
+              border:'1px solid', borderColor: Color.themeBlue, lineHeight:'32px',
+              background: this.state.show_revenue_management_rules?Color.themeBlue:'white', 
+              color: this.state.show_revenue_management_rules?'white':Color.themeBlue,
+              borderRadius: this.state.show_revenue_management_rules?'4px 4px 0 0':4, 
+              width:350, textAlign:'center', transform: 'translateX(-50%)', fontSize: 14}}>
+              {t('Revenue management rules')}
+              <div style={{width:16, height:16, display:'inline-block', lineHeight: '16px',
+                verticalAlign:'middle', marginLeft:12}}
+                onClick={()=>this.setState({show_revenue_management_rules: !this.state.show_revenue_management_rules})}>
+              <i 
+                className={this.state.show_revenue_management_rules?'arrow down-x up-x':'arrow down-x'}
+                style={{}}
+              />
+              </div>
             </div>
-            <div style={{marginLeft: 30, lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 1</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 2</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 3</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 4</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 5</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 6</div>
-            <div style={{marginLeft: 30,  lineHeight:'32px', textAlign: 'left', paddingLeft:20,
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>host name 7</div>              
-            <div style={{marginLeft: 30,  lineHeight:'16px', textAlign: 'left', padding:'5px 20px',
-              borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>{t('Mean excluding highest and lowest')}</div>              
           </div>
-          <div className='calendar-view-container' 
-            style={{width:'calc( 100% - 272px )', position:'relative'}}>
-            <div style={{position:'absolute', left:0, top:5, textAlign:'right', 
-              width:72, background: '#f9f9f9',
-              fontSize:12, color:Color.themeBlue, zIndex:100}}>
-              {mon[new Date(2019, this.state.calendar_scroll_distance2>78*31?1:0, 1).getMonth()]} 
-            </div>            
-            <div id='calendar-view2' className='calendar-view' style={{overflow: 'auto', display:'flex'}} >             
-            {
-              Array(new Date(2019, 1, 0).getDate()).fill(1).map( (item, index) => 
-                <div style={{minWidth:78}}>
-                  <div  style={{background:'#f9f9f9', height:60, display:'flex', flexDirection:'column-reverse'}}>
-                    <div style={{textAlign:'right', paddingRight:6, fontSize:15, fontWeight:600, 
-                      color:'#4d4d59',borderRight:'1px solid #dedede'}}>
-                      {index + 1}
-                    </div>                  
-                    <div style={{textAlign:'right', paddingRight:6, fontSize:12, color:'#4d4d59'}}>
-                      {days[new Date(2019, 0, index + 1).getDay()]} 
+          { this.state.show_revenue_management_rules &&
+            <div style={{border:'2px solid', borderColor: Color.themeBlue, borderRadius:4, background:'white'}}>
+              <div style={{display:'flex', padding:'0 30px', alignItems:'center', margin:'30px 0 20px'}}>
+                <div style={{display:'flex',  borderRadius: 16, height: 34, border: '1px solid #ebebeb',
+                  background: Color.gray1,  padding:'0 7px', boxSizing:'border-box',minWidth:300}}>
+                  <div onClick={()=>this.setState({price_not_market_price: false})}
+                    className={this.state.price_not_market_price?'header-tab':'header-tab in-focus'}>
+                    {t('Market average prices')}
+                  </div>            
+                  <div onClick={()=>this.setState({price_not_market_price: true})}
+                    className={this.state.price_not_market_price?'header-tab in-focus':'header-tab'}>
+                    {t('Default BAR')}
+                  </div>          
+                </div>
+                <div style={{color:'#9b9b9b', fontSize:12, maxWidth: 590, marginLeft: 20, lineHeight:1.4121}}>
+                  {t("The rules engine allows deltas to be set for different combinations of occupancy and advance purchase window.  \
+                    These deltas can be set relative to the hotel's 'Default BARs' or to 'Market average prices'")}
+                </div>
+              </div>
+
+              {!this.state.price_not_market_price &&
+                <div style={{display:'flex', padding:'16px 30px', flexWrap:'wrap', background: Color.background, marginBottom: 2}}>
+
+                  <div style={{display:'flex', flexWrap:'wrap', borderRight: '1px solid #dddddd', maxWidth:400, marginLeft:20}}>
+                    { [ [{name:'mean', text: 'Mean'}, {name:'median', text: 'Median'}], 
+                      [{name:'mean_exclude', text: 'Mean excluding highest and lowest'}, 
+                      {name:'median_exclude', text: 'Median excluding highest and lowest'}] ].map( line => 
+                      <div style={{marginRight:20}}>
+                        { line.map( item => 
+                          <div style={{display:'flex', height:36, alignItems:'center'}}>
+                            <div name={item.name}
+                              onClick={this.onAvgChange} style={{lineHeight:'18px'}}
+                              class={this.state.avg_option===item.name?'radio active':'radio'}>
+                              <div name={item.name} class='radio-inner'>
+                              </div>
+                            </div>
+                            <span style={{lineHeight:'20px',marginLeft:8}}>
+                              {t(item.text)}
+                            </span>            
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{marginLeft: 20}}>
+                    <div style={{display:'flex', alignItems:'center'}}>
+                      <div style={{lineHeight:'20px', margin:8}}>{t('Map competitive average to:')}</div>
+                      <div style={{height:12, border:'1px solid #c0c0c0', lineHeight:'12px',
+                        borderRadius:16, width:250, background:'white', padding:'6px 16px', textAlign:'right'}}>
+                        <div style={{display:'inline-block', width:12, height:12, lineHeight:1, marginBottom:1}}>
+                          <i className='arrow down' style={{marginRight:1, padding:4, borderWidth:'0 2px 2px 0', borderColor: Color.themeBlue}}/>
+                        </div>
+                      </div>
                     </div>
-                    <div style={{textAlign:'right', paddingRight:6, fontSize:12, color:Color.themeBlue, display:!index?'block':'none'}}>
-                      {mon[new Date(2019, 0, index + 1).getMonth()]} 
-                    </div>                    
+                    <div style={{display:'flex', alignItems:'center'}}>
+                      <div style={{lineHeight:'20px', margin:8}}>{t('For other master room types use which delta?')}</div>
+                      <div style={{display:'flex',  borderRadius: 16, height: 24, width:74, border: '1px solid #c0c0c0',
+                        background: 'white', position:'relative'}}>
+                        <div onClick={()=>this.setState({percentage_not_number: true})}
+                          className={this.state.percentage_not_number?'toggle-box-item in-focus':'toggle-box-item'}
+                          style={{ left:10 }}>
+                          %
+                        </div>
+                        <div onClick={()=>this.setState({percentage_not_number: false})}
+                          className={this.state.percentage_not_number?'toggle-box-item':'toggle-box-item in-focus'}
+                          style={{ right:13 }}>
+                          #
+                        </div>      
+                        <div className={this.state.percentage_not_number?'toggle-box':'toggle-box in-right'}
+                          style={{background:Color.themeBlue, height:32, width:36, position:'absolute', top:-4, borderRadius:16}}></div>    
+                      </div>                
+                    </div>              
                   </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:42, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>                                                                                                                              
 
                 </div>
-              )
-            }        
-            {
-              Array(new Date(2019, 2, 0).getDate()).fill(1).map( (item, index) => 
-                <div style={{minWidth:78}}>
-                  <div  style={{background:'#f9f9f9', height:60, display:'flex', flexDirection:'column-reverse'}}>
-                    <div style={{textAlign:'right', paddingRight:6, fontSize:15, fontWeight:600, 
-                      color:'#4d4d59',borderRight:'1px solid #dedede'}}>
-                      {index + 1}
-                    </div>                  
-                    <div style={{textAlign:'right', paddingRight:6, fontSize:12, color:'#4d4d59'}}>
-                      {days[new Date(2019, 1, index + 1).getDay()]} 
-                    </div>
-                    <div style={{textAlign:'right', paddingRight:6, fontSize:12, color: Color.themeBlue, display:!index?'block':'none'}}>
-                      {mon[new Date(2019, 1, index + 1).getMonth()]} 
-                    </div>                    
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:32, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>
-                  <div  style={{height:42, borderBottom:'1px solid #dedede', borderRight:'1px solid #dedede'}}>
-                  &nbsp;
-                  </div>                                                                                                                              
+              }
 
+              <div className='rules-table' style={{minWidth:754 + 81*(this.state.headers.length - 7)}}>
+                <div className='rules-table-header'
+                  style={{display:'flex', background: Color.background, padding: '12px 30px 7px',}}>
+                  <div style={{minWidth:88, display:'flex', alignItems:'center', 
+                    justifyContent:'flex-end', fontSize: 12, color:'#257abc',textAlign:'right'}}>
+                    <div onClick={()=>this.setState({rowNamesEdit: !this.state.rowNamesEdit})}
+                      style={{width:70, textAlign:'center', cursor:'pointer'}}>
+                      <i class="zuzu-icon-cog"></i> {t('Edit')}
+                    </div>
+                  </div>
+                  { this.state.headers.map( (item, index) => 
+                    <div style={{width:79, marginRight:2,boxSizing:'border-box',}}>
+                      <div onClick={this.state.rowNamesEdit && index > 1 ?()=>this.setState({ visibleHeaderIndex: index }):null}
+                      className={this.state.rowNamesEdit && index > 1 ?'edtiable-header editing':'edtiable-header'}>
+                        {index > 1 && item.low && item.high && item.low + '-' + item.high + ' days'}
+                        {index > 1 && !item.high && item.low + '+ days'}
+                        {index <= 1 && item}
+                        { this.state.visibleHeaderIndex === index && 
+                          <EditableRange
+                            range={item}
+                            index={index}
+                            header={true}
+                            single={ index == this.state.headers.length - 1 }
+                            lowBound={this.state.headers[index - 1].low + (index==this.state.headers.length - 1?1:2)}
+                            highBound={index==this.state.headers.length - 2?this.state.headers[index + 1].low:(this.state.headers[index + 1]?this.state.headers[index + 1].high - 2:720)}
+                            onConfirm={this.onHeaderChange}
+                            onCancel={this.collapsePercentageSelector}
+                          />                    
+                        }       
+                        <div style={{width:24, height:24, background:'#ffffff', borderRadius:12, zIndex:1,
+                          display: this.state.rowNamesEdit&&index>2?'block':'none',  boxSizing:'border-box',
+                          position:'absolute', left:27, top:-12, padding:2}}>
+                          <div onClick={(e)=>{
+                              this.setState({show_popup: true, delete_header_index: index })
+                              e.stopPropagation()
+                            }}
+                            style={{width:20, height:20, background:'#c92d28', borderRadius:10, fontWeight:200,
+                            color:'white', fontSize:16, fontFamily:'sans-serif', lineHeight:'18px', textAlign:'center'}}>
+                            &times;
+                          </div>                        
+                        </div>                             
+                      </div>
+                    </div>) 
+                  }
+                  { this.state.rowNamesEdit &&
+                      <div 
+                        onMouseUp={this.addNewHeader}
+                        onMouseDown={()=>this.setState({newHeaderBeingClicked: true})}  
+                        style={{ marginLeft:12, display:'flex', alignItems:'center'}}>
+                          <div style={{background:this.state.newHeaderBeingClicked?Color.themeBlue:null,
+                            color: this.state.newHeaderBeingClicked?'#ffffff':Color.themeBlue, width: 26,
+                            cursor:'pointer', borderRadius:12, textAlign:'center', fontSize:16,}}>
+                            +
+                          </div>
+                      </div>
+                  }             
                 </div>
-              )              
-            }        
+                <div className='rules-table-body' style={{display:'flex'}}>
+                  <div style={{width:118}}>
+                    { this.state.rowNames.map( (item, index) => 
+                      <div 
+                        className='editable-row-names'
+                        style={{marginLeft:30, color: '#ebebeb', width:88, position: 'relative', boxSizing:'border-box',
+                        textAlign:'right', height: 33, lineHeight:'32px',}}>
+                        {this.state.rowNamesEdit?index+1:null}
+                        <div style={{display:'inline-block',height:27, width:70, marginLeft:4,
+                          verticalAlign:'top', borderBottom:'1px solid #f3f3f3', padding:'3px 0 2px',}}>
+                          <div 
+                            className={'row-name' + (this.state.rowNamesEdit?' editing':'')}
+                            onClick={ this.state.rowNamesEdit?(e)=>this.setState({ visibleRowNameIndex: index}):null } >
+                            {item.low + ' - ' + item.high + '%'}
+                            <div style={{width:24, height:24, background:'#ffffff', borderRadius:12, zIndex:1,
+                              display: this.state.rowNamesEdit&&index?'block':'none',  boxSizing:'border-box',
+                              position:'absolute', right:-16, top:1.5, padding:2}}>
+                              <div onClick={(e)=>{
+                                  this.setState({show_popup: true, delete_row_name_index: index })
+                                  e.stopPropagation()
+                                }}
+                                style={{width:20, height:20, background:'#c92d28', borderRadius:10, fontWeight:200,
+                                color:'white', fontSize:16, fontFamily:'sans-serif', lineHeight:'18px'}}>
+                                &times;
+                              </div>                        
+                            </div>
+                          </div>
+                        </div>
+                        { this.state.visibleRowNameIndex === index && 
+                          <EditableRange
+                            range={item}
+                            index={index}
+                            lowBound={index?this.state.rowNames[index - 1].low + 2:0}
+                            highBound={index==this.state.rowNames.length - 1?100:this.state.rowNames[index + 1].high - 2}
+                            onConfirm={this.onRowNameChange}
+                            onCancel={this.collapsePercentageSelector}
+                          />
+                        }
+                      </div>) 
+                    }
+                  </div>
+                  <div className='rules-table-content'>
+                    { this.state.data.map( (row, row_index) => 
+                        <div className="rules-table-row" style={{display:'flex'}}>
+                          { row.map( (cell, col_index) => 
+                              <div 
+                                style={{ position:'relative',width:80,borderRight: '1px solid #f3f3f3', borderBottom:'1px solid #f3f3f3'}}>
+                              <input className='rules-table-cell' 
+                                value={cell} 
+                                onChange={(e)=>this.updateCell(e, row_index, col_index)}
+                                style={{ width:78, borderWidth:0, padding:0, lineHeight:'31px', 
+                                  textAlign:'center', fontSize: 13, color:'black', boxSizing:'border-box'}}/>
+                              <span className='rules-table-cell-hook'></span>
+                              </div>
+                            )
+                          }
+                        </div>
+                      )
+                    }
+                  </div>
+                </div>  
+                { this.state.rowNamesEdit &&
+                  <div style={{marginLeft:48,  width: 632, borderBottom: '1px solid #f3f3f3', lineHeight:'32px'}}>
+                    <div 
+                      onMouseUp={this.addNewRow}
+                      onMouseDown={()=>this.setState({newRowBeingClicked: true})}  
+                      style={{ background:this.state.newRowBeingClicked?Color.themeBlue:null, cursor:'pointer', borderRadius:12,
+                        color: this.state.newRowBeingClicked?'#ffffff':Color.themeBlue, marginLeft:22, verticalAlign:'middle',
+                        fontSize:16, padding:'2px 8px', lineHeight:1, display:'inline-block'}}>+</div>
+                  </div>  
+                }    
+
+                <button 
+                  style={{background:Color.orange, width:93, textAlign:'center', fontSize:16, fontWeight:200, cursor:'pointer',
+                    lineHeight:'35px', borderRadius:5, color:'white', margin:'20px 50px', outline:'none'}}>
+                  {t('Save')}
+                </button>  
+              </div>            
             </div>
-          </div>
-          <div style={{minWidth:14, textAlign:'center', height:60, background:'#f9f9f9', paddingRight:30}}>
-            <div onMouseOver={()=>this.scrollRight(2)} onMouseOut={()=>this.onMouseOutRight(2)}
-              style={{height:14, width:14, display:'inline-block', 
-                marginTop:24, cursor:'pointer'}}>
-              <i className="arrow right" style={{ borderColor: 'black', width:7, height:7, padding:0, 
-                borderWidth:'0 2px 2px 0', left:0, top:-1, position:'relative'}}/>
-            </div>
-          </div>
+          }
         </div>
 
 
 
-
-
-
-
-
-
-
-        <div style={{display:'flex', justifyContent:'space-between', padding:'0 30px', alignItems:'center', marginTop:30}}>
-          <div style={{display:'flex',  borderRadius: 16,
-            background:'#eff7ff',  padding:'0 7px', boxSizing:'border-box'}}>
-            <div onClick={()=>this.setState({price_not_market_price: true})}
-              className={this.state.price_not_market_price?'header-tab in-focus':'header-tab'}>
-              {t('Default BAR')}
-            </div>
-            <div onClick={()=>this.setState({price_not_market_price: false})}
-              className={this.state.price_not_market_price?'header-tab':'header-tab in-focus'}>
-              {t('Market average prices')}
-            </div>          
-          </div>
+        <div className='experiment' style={{width: '100%', height: 400, padding:100, boxSizing:'border-box'}}>
           <div style={{display:'flex'}}>
             <div onClick={this.toggleOnOff}
               style={{color:this.state.on?'white':'rgba(0, 0, 0, 0.25)', background: this.state.on?Color.themeBlue:null,
@@ -589,131 +836,17 @@ class RevenueManagementRules extends React.Component {
           </div>
         </div>
 
-        <div style={{color:'#9b9b9b', fontSize:12, padding:'15px 50px'}}>
-          {t('Description text blah blah and blah')}
-        </div>
-        <div className='rules-table' style={{}}>
-          <div className='rules-table-header'
-            style={{display:'flex', background: Color.background, padding: '15px 30px 7px'}}>
-            <div style={{minWidth:88, display:'flex', alignItems:'center', 
-              justifyContent:'flex-end', fontSize: 12, color:'#257abc',textAlign:'right'}}>
-              <div onClick={()=>this.setState({rowNamesEdit: !this.state.rowNamesEdit})}
-                style={{width:70, textAlign:'center', cursor:'pointer'}}>
-                <i class="zuzu-icon-cog"></i> {t('Edit')}
-              </div>
-            </div>
-            { this.state.headers.map( item => 
-              <div style={{color: '#4d4d59', paddingRight:12, boxSizing:'border-box',
-              display:'flex', flexDirection:'column-reverse',
-              width:79, textAlign:'right'}}>{item}</div>) }
-          </div>
-          <div className='rules-table-body' style={{display:'flex'}}>
-            <div style={{width:118}}>
-              { this.state.rowNames.map( (item, index) => 
-                <div className="percentage-selector"
-                  style={{marginLeft:30, color: '#c0c0c0', width:88, position: 'relative', boxSizing:'border-box',
-                  textAlign:'right', height: 33, lineHeight:'32px',}}>
-                  {this.state.rowNamesEdit?index+1:null}
-                  <div style={{display:'inline-block',height:27, width:70, marginLeft:4,
-                    verticalAlign:'top', borderBottom:'1px solid #f3f3f3', padding:'3px 0 2px',}}>
-                    <div 
-                      className={'row-name' + (this.state.rowNamesEdit?' editing':'')}
-                      onClick={ this.state.rowNamesEdit?(e)=>this.setState({ visibleRowNameIndex: index}):null } >
-                      {item.low + ' - ' + item.high + '%'}
-                      <div style={{width:24, height:24, background:'#ffffff', borderRadius:12, 
-                        display: this.state.rowNamesEdit&&index?'block':'none',  boxSizing:'border-box',
-                        position:'absolute', right:-16, top:1.5, padding:2}}>
-                        <div style={{width:20, height:20, background:'#c92d28', borderRadius:10, fontWeight:200,
-                          color:'white', fontSize:16, fontFamily:'sans-serif', lineHeight:'18px'}}>
-                        &times;
-                        </div>                        
-                      </div>
-                    </div>
-                  </div>
-                  { this.state.visibleRowNameIndex === index && 
-                    <div style={{background:Color.themeBlueLight, position: 'absolute', zIndex:2, left:-4, top:-12,
-                      boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.5)', padding:6, borderRadius:2}}>
-                      <div style={{display:'flex', color:'#0079cc', textAlign:'center', padding:'2.5px 0',
-                        fontSize:10, lineHeight:'1', opacity: 0.75}}>
-                        <div style={{width:12, paddingRight:4 }}>&nbsp;</div>
-                        <div style={{width:50, }}>>62%</div>
-                        <div style={{width:10, }}>&nbsp;</div>
-                        <div style={{width:50, }}>{'<98%'}</div>
-                      </div>
-                      <div style={{display:'flex'}}>
-                        <div style={{width:12, paddingRight:4 , textAlign:'right', fontSize:12, color:'#65646d'}}>{index+1}</div>
-                        <input style={{width:20, padding:0, borderRadius:4, width:48, height:27, boxSizing:'content-box',
-                          fontSize: 18, border:'1px solid #c0c0c0', textAlign:'center'}}
-                          value={item.low} 
-                          onChange={(e)=>this.updateRowName(e, index, 'low')}
-                          />
-                        <div style={{width:10, textAlign:'center'}}>-</div>
-                        <input style={{width:20, padding:0, borderRadius:4, width:48, height:27, boxSizing:'content-box',
-                          fontSize: 18, border:'1px solid #c0c0c0', textAlign:'center'}}
-                          value={item.high}
-                          onChange={(e)=>this.updateRowName(e, index, 'high')}
-                          />
-                      </div>
-                    </div>
-                  }
-                </div>) 
-              }
-            </div>
-            <div className='rules-table-content'>
-              { this.state.data.map( (row, row_index) => 
-                  <div className="rules-table-row" style={{display:'flex'}}>
-                    { row.map( (cell, col_index) => 
-                        <div 
-                          style={{ position:'relative',width:78,borderRight: '1px solid #f3f3f3', borderBottom:'1px solid #f3f3f3'}}>
-                        <input className='rules-table-cell' 
-                          value={cell} 
-                          onChange={(e)=>this.updateCell(e, row_index, col_index)}
-                          style={{ width:78, borderWidth:0, padding:0, lineHeight:'31px', 
-                            textAlign:'center', fontSize: 13, color:'black', boxSizing:'border-box'}}/>
-                        <span className='rules-table-cell-hook'></span>
-                        </div>
-                      )
-                    }
-                  </div>
-                )
-              }
-            </div>
-          </div>  
-          { this.state.rowNamesEdit &&
-            <div style={{marginLeft:48,  width: 632, borderBottom: '1px solid #f3f3f3', lineHeight:'32px'}}>
-              <div 
-                onMouseUp={this.addNewRow}
-                onMouseDown={()=>this.setState({newRowBeingClicked: true})}  
-                style={{ background:this.state.newRowBeingClicked?Color.themeBlue:null, cursor:'pointer', borderRadius:12,
-                  color: this.state.newRowBeingClicked?'#ffffff':Color.themeBlue, marginLeft:22, verticalAlign:'middle',
-                  fontSize:16, padding:'2px 8px', lineHeight:1, display:'inline-block'}}>+</div>
-            </div>  
-          }      
-        </div>
-
-        {!this.state.price_not_market_price &&
-          <div style={{display:'flex', padding:'20px 30px', flexWrap:'wrap'}}>
-            { [{name:'mean', text: 'Mean'}, {name:'mean_exclude', text: 'Mean excluding highest and lowest'}, 
-              {name:'median', text: 'Median'}, {name:'median_exclude', text: 'Median excluding highest and lowest'}].map( item => 
-              <div style={{display:'flex', marginRight:30, marginTop:10}}>
-                <div name={item.name}
-                  onClick={this.onAvgChange}
-                  class={this.state.avg_option===item.name?'radio active':'radio'}>
-                  <div name={item.name} class='radio-inner'>
-                  </div>
-                </div>
-                <span style={{lineHeight:'20px',marginLeft:8}}>
-                  {t(item.text)}
-                </span>            
-              </div>
-            )}                          
-          </div>
-        }
-
+        {this.state.show_popup && ( 
+          <DeletePopup
+            text={t('Confirm deleting this ' + (this.state.delete_row_name_index?'row':'column') + '?')}
+            confirm={this.deleteRowOrColumn}
+            cancel={()=>this.setState({show_popup:false})}
+          />
+        )}
 		  </div>
-     </div>
+    </div>
     );
   }
 }
 
-export default RevenueManagementRules;
+export default RulesEngine;

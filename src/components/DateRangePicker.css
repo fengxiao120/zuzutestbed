@@ -24,3 +24,31 @@
 	border: 1px solid #f36e33;
 	color: white
 }
+
+
+.d-r-p i.arrow{
+  border: solid black;
+  border-width: 0 1px 1px 0;
+  display: inline-block;
+  padding: 3px;  
+}
+
+.d-r-p .right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
+.d-r-p .left {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+}
+
+.d-r-p .up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}
+
+.d-r-p .down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}

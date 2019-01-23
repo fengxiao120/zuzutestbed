@@ -1,4 +1,4 @@
-const API_ROOT = 'http://localhost:8080'
+const API_ROOT = window.location.protocol + '//' + window.location.hostname + ':8080'
 
 const FetchGet = async function (url, params) {
     if(params)

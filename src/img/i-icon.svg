@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>Information icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Monthly-report" transform="translate(-287.000000, -1025.000000)">
+            <g id="Information-icon" transform="translate(288.000000, 1025.000000)">
+                <g>
+                    <circle id="Oval" stroke="#337AB7" fill="#FFFFFF" cx="6" cy="7" r="6"></circle>
+                    <text id="i" font-family="AvenirNext-DemiBold, Avenir Next" font-size="11" font-weight="500" fill="#337AB7">
+                        <tspan x="4.5" y="11">i</tspan>
+                    </text>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

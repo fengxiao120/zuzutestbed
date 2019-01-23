@@ -100,7 +100,7 @@
 }
 
 .dropdown-container{
-  display: relative;
+  position: relative;
 }
 
 .availability-log-dropdown {

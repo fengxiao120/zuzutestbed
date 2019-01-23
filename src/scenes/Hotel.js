@@ -6,7 +6,7 @@ import './Hotel.css'
 
 import ZuzuDateRangePicker from '../components/DateRangePicker'
 import Format from '../utils/Format'
-
+import ScrollableCheckboxGroup from '../components/ScrollableCheckboxGroup'
 import dialogBox from '../img/dialog-box.svg'
 
 import 'react-date-range/dist/styles.css'; // main style file
@@ -39,27 +39,17 @@ class Hotel extends React.Component {
       booking_window_last_month: [3, 2, 3, 2, 1, 1, 1, 1],
       booking_window_ytd: [3, 2, 1, 0, 2, 3, 1, 0],
       booked_ranges: [{}],
-      checkin_ranges: [{}]  
+      checkin_ranges: [{}] ,
+      selected_range: {},
 		}
 	}
 
-	onRangeSelected = (range, index, which_range) => {
-    let new_ranges = this.state[which_range].slice()
-    new_ranges[index] = range
-		this.setState({[which_range]: new_ranges})
+	onRangeSelected = (range) => {
+		this.setState({selected_range: range})
 	}
 
-  addOneMoreRange = (which_range) => {
-    this.setState( { [which_range]: this.state[which_range].slice().concat([{}]) } )
-  }
-
-  removeRange = (index, which_range) => {
-    if(this.state[which_range].length > 1){
-      let new_ranges = this.state[which_range].slice()
-      new_ranges.splice(index, 1)
-      this.setState({[which_range]: new_ranges})
-    } else
-      this.setState({[which_range]:[{}]})
+  removeRange = () => {
+      this.setState({selected_range:[{}]})
   }
 
   onHover = (e) => {
@@ -69,7 +59,7 @@ class Hotel extends React.Component {
 
   render() {
     return (	
-    <div style={{}}>
+    <div style={{display:'flex'}}>
     	<Navigation
     		width={this.props.width}
     		history={this.props.history}
@@ -77,7 +67,8 @@ class Hotel extends React.Component {
         	root='Hotels'
     		path={'/hotel'}
     	/>
-    	<div style={{width: 'calc(100% - ' + this.props.width + 'px )', 
+    	<div  className="App" 
+        style={{width: 'calc(100% - ' + this.props.width + 'px )', 
     		display:'inline-block', verticalAlign:'top', boxSizing:'border-box'}}> 
 			  <div style={{fontWeight:600, fontSize:36, lineHeight:'140px',
 				  textAlign:'center', height:140, borderBottom:'2px solid #ddd',
@@ -207,71 +198,56 @@ class Hotel extends React.Component {
             </div>            
           </div>
 
+        <div style={{marginLeft:50, marginBottom: 200}}>
+        <h1 class="table-top-header">
+          {t('Country of origin')}  
+          <div className='dropdown-container' style={{cursor:'pointer', display: 'inline-block', verticalAlign:'20%', marginLeft:3, lineHeight:'14px'}}>
+            <img src={require('../img/i-icon.svg')} style={{}} />
+            <div class="dropdown-content" 
+              style={{top:-20, left:'100%', padding:12, marginLeft: 12, boxShadow: '0 2px 7px 0 #aaa', boxSizing:'content-box',
+              background:'white', borderRadius:4, width:280, fontSize:12, fontFamily:'Helvetica, sans-serif', lineHeight:1}}>
+              <div style={{transform:'rotate(45deg)', boxShadow: '-2px 2px 7px -2px #aaa', background:'white',
+                width:16, height:16, position:'absolute', left:-8, top:20}}></div>
+              {t('Data negara asal disediakan oleh channel. Beberapa channel mis. Expedia tidak memberikan data ini, jadi pemesanan ini negara asalnya akan ditandai sebagai tidak diketahui')}
+            </div>          
+          </div>
+        </h1>
+        </div>
+
+          <ScrollableCheckboxGroup
+            options={['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
+            'September', 'October', 'November', 'December'].map((item, index)=>{return {id:index, name:item}})}
+            topic='month'
+            sort_by='month'
+            A2Z={true}
+          />
 
     			<h1>own DRP demo</h1>
           {
-            this.state.booked_ranges.map( (booked_range, index) => 
-              <div style={{display:'flex', alignItems:'center', flexWrap:'wrap', width:180}}>
-                <div className="time-dropdown">
-                  <div>
-                    {formatDate(booked_range.start, 'Select a date range') + formatDate(booked_range.end, '', ' - ')}&nbsp;
-                  </div>                
-                  <div className="time-dropdown-content">
-                    <ZuzuDateRangePicker
-                      year={2018}
-                      month={11}
-                      disabledRanges={this.state.booked_ranges.filter((item, sub_index)=>sub_index!=index)}
-                      selectedRange={booked_range}
-                      onRangeSelected={(range)=>this.onRangeSelected(range, index, 'booked_ranges')}                         
-                    />
-                  </div>                
-                </div> 
-                <div style={{marginLeft:6, cursor:'pointer'}}
-                  onClick={()=>this.removeRange(index, 'booked_ranges')}>
-                  &times;
-                </div>
-                <div onClick={()=>this.addOneMoreRange('booked_ranges')}
-                  style={{cursor: 'pointer',display: (index+1==this.state.booked_ranges.length&&booked_range.end)?'inline-block':'none'}}>
-                  <div style={{display:'inline-block', border:'1px dotted gray', cursor: 'pointer',
-                  borderRadius:3, width:20, height:20, textAlign:'center', marginRight:10}}>+</div>                  
-                  <div style={{display:'inline-block', verticalAlign:'top', height:20, lineHeight:'20px'}}>
-                    {t('Add another')}
-                  </div> 
-                </div>
+            <div style={{display:'flex', alignItems:'center', flexWrap:'wrap', width:180}}>
+              <div className="time-dropdown">
+                <div>
+                  {formatDate(this.state.selected_range.start, 'Select a date range') 
+                    + formatDate(this.state.selected_range.end, '', ' - ')}&nbsp;
+                </div>                
+                <div className="time-dropdown-content" style={{display:'block'}}>
+                  <ZuzuDateRangePicker
+                    year={new Date().getFullYear()}
+                    month={new Date().getMonth()}
+                    disabledRanges={[]}
+                    disableAfter={new Date()}
+                    twoMonth={true}
+                    monthInRight={true}
+                    selectedRange={this.state.selected_range}
+                    onRangeSelected={(range)=>this.onRangeSelected(range)}                         
+                  />
+                </div>                
+              </div> 
+              <div style={{marginLeft:6, cursor:'pointer'}}
+                onClick={()=>this.removeRange('booked_ranges')}>
+                &times;
               </div>
-            )
-          }
-          {
-            this.state.checkin_ranges.map( (booked_range, index) => 
-              <div style={{display:'flex', alignItems:'center', flexWrap:'wrap', width:180}}>
-                <div className="time-dropdown">
-                  <div>
-                    {formatDate(booked_range.start, 'Select a date range') + formatDate(booked_range.end, '', ' - ')}&nbsp;
-                  </div>                
-                  <div className="time-dropdown-content">
-                    <ZuzuDateRangePicker
-                      year={2018}
-                      month={11}
-                      disabledRanges={this.state.checkin_ranges.filter((item, sub_index)=>sub_index!=index)}
-                      selectedRange={booked_range}
-                      onRangeSelected={(range)=>this.onRangeSelected(range, index, 'checkin_ranges')}                         
-                    />
-                  </div>                
-                </div> 
-                <div style={{marginLeft:6, cursor:'pointer'}}
-                  onClick={()=>this.removeRange(index, 'checkin_ranges')}>
-                  &times;
-                </div>
-                <div onClick={()=>this.addOneMoreRange('checkin_ranges')}
-                  style={{cursor: 'pointer',display: (index+1==this.state.checkin_ranges.length&&booked_range.end)?'inline-block':'none'}}>
-                  <div style={{display:'inline-block', border:'1px dotted gray', cursor: 'pointer',
-                  borderRadius:3, width:20, height:20, textAlign:'center', marginRight:10}}>+</div>                  
-                  <div style={{display:'inline-block', verticalAlign:'top', height:20, lineHeight:'20px'}}>
-                    {t('Add another')}
-                  </div> 
-                </div>
-              </div>
-            )
+            </div>
           }
         </div> 
       </div>
