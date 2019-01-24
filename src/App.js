@@ -4,7 +4,7 @@ import './App.css'
 import './FontAwesome.css'
 
 import Dashboard from './scenes/Dashboard'
-import RatesAndAvailability from './scenes/RatesAndAvailability'
+import RulesEngine from './scenes/RulesEngine'
 import YourHotelToday from './scenes/YourHotelToday'
 import AllBookings from './scenes/AllBookings'
 import Promotions from './scenes/Promotions'
@@ -46,7 +46,7 @@ class App extends React.Component {
               />}
             />            
             <Route path="/rates-and-availability" 
-              render={(props) => <RatesAndAvailability {...props}
+              render={(props) => <RulesEngine {...props}
                 width={this.state.width} 
                 toggleWidth={this.toggleNavWidth}  
               />}

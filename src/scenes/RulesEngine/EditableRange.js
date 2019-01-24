@@ -1,69 +1,96 @@
 import React from "react";
-import Color from "../Color"
+import Color from '../../Color'
+
+const t = str => str
 
 class EditableRange extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {  
-      selected: this.props.options.slice().map(item => item.id)
-    }
-    console.log('fuck constructor is run')
+  state = {  
+    low: this.props.range.low,
+    high: this.props.range.high,
   }
 
-  onSelect = ( id ) => {
-    console.log(id)
-    if(this.state.selected.includes(id))
-      this.setState({selected: this.state.selected.filter( item => item != id )})
-    else
-      this.setState({selected: this.state.selected.concat( id )})
+  componentWillReceiveProps = (nextProps) => {
+    this.setState({ low: nextProps.range.low, high: nextProps.range.high })
+  }
+
+  updateRowName = (e, high_or_low) => {
+    if( high_or_low=='high' )
+      this.setState({ high: parseInt(e.target.value) || '' })
+    else if( high_or_low=='low')
+      this.setState({ low: parseInt(e.target.value) || '' })
+  }
+
+  validate = ( ) => {
+    const lowBound = isNaN(this.props.lowBound)?3:this.props.lowBound
+    if( this.state.low >= lowBound && this.state.low < this.props.highBound ){
+      if( !this.props.single ){
+        if( this.state.high <= this.props.highBound && this.state.high > this.state.low ){
+          console.log('wtf1')
+          return true
+        }
+      }
+      else{
+        console.log('wtf2')
+        return true
+      }      
+    }
+      
+    alert('Please enter an valid range')
+    return false
+  }
+
+  confirmUpdatingRowName = () => {
+    if(this.validate())
+      this.props.onConfirm(this.props.index, this.state)
+  }
+
+  cancelUpdatingRowName = () => {
+    this.setState({ low: this.props.range.low, high: this.props.range.high })
+    this.props.onCancel()
   }
 
   render() {
-    console.log('ScrollableCheckboxGroup rendering')
-    console.log(this.state.selected)
+    console.log('EditableRange rendering')
     return (
-      <div style={{padding:8, display:'inline-block', minWidth: 300, color: '#4d4d59'}}>
-        <div onClick={()=>this.props.setA2Z(this.props.topic, true, true)}
-          className={this.props.sort_by==this.props.topic&&this.props.A2Z?'light-blue-hover active':'light-blue-hover'} 
-          style={{padding:'6px 12px'}}>{'Sort A-Z'}</div>
-        <div onClick={()=>this.props.setA2Z(this.props.topic, false, true)}
-          className={this.props.sort_by==this.props.topic&&!this.props.A2Z?'light-blue-hover active':'light-blue-hover'} 
-          style={{padding:'6px 12px'}}>{'Sort Z-A'}</div>
-        <div style={{borderBottom: '1px solid #e0e0e0', margin:'2px 0'}}></div>
-        <div className='light-blue-hover'
-          onClick={()=>{
-            if(this.state.selected.length == this.props.options.length)
-              this.setState({selected: []})
-            else
-              this.setState({selected: this.props.options.slice().map(item => item.id)})
-          }}
-          style={{padding:'6px 12px', cursor:'pointer'}}>
-          {this.state.selected.length == this.props.options.length?'Deselect all':'Select all'}
-        </div>
-        <div style={{maxHeight:360, overflow: 'auto'}}>
-        { this.props.options.map(item => <div>
-            <div style={{display: 'flex', padding:'6px 8px'}}>
-              <div onClick={()=>this.onSelect(item.id)} 
-                style={{width:18, height:18, background: this.state.selected.includes(item.id)?Color.themeBlue:'white', 
-                  cursor:'pointer', boxSizing:'border-box', border:'2px solid #337ab7', color:'white', borderRadius:3}}>
-                <i className="tick-x" style={{display: this.state.selected.includes(item.id)?null:'none', 
-                  marginLeft:4, marginBottom:1, borderWidth: '0 2px 2px 0', width: 4, height: 8 }}/>
-              </div>
-              <div style={{marginLeft:15}}>
-                {item.name}
-              </div>
-            </div>
+      <div onClick={(e)=>e.stopPropagation()} style={{background:Color.themeBlueLight, position: 'absolute', zIndex:2, left:-4, top:-12,  
+        minWidth:80, boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.5)', padding:6, borderRadius:2}}>
+        <div style={{display:'flex', color:'#0079cc',  justifyContent:'center', padding:'2.5px 0',
+          fontSize:10, lineHeight:'1', opacity: 0.75}}>
+          { !this.props.header && <div style={{width:12, paddingRight:4, }}>&nbsp;</div> }
+          <div style={{width:50, textAlign:'center',}}>
+            { this.props.lowBound?'>' + (this.props.lowBound - 1) + '%':''}
           </div>
-        )}    
+          { !this.props.single && <div style={{width:10, }}>&nbsp;</div> }
+          { !this.props.single && <div style={{width:50, textAlign:'center',}}>{this.props.highBound!=100 &&('<' + (this.props.highBound + 1) + '%')}</div> }
         </div>
-        <div style={{padding: '6px 8px'}}><span style={{color:'#f36f31'}}>*</span>{'At least one option must be selected'}</div>
-        <div style={{display:'flex', justifyContent:'space-between', padding:'0 8px'}}>
-          <div className="button-div" style={{width:143}}>
-          {'Go'}
+        <div style={{display:'flex', height:32, lineHeight:'32px', justifyContent:'center'}}>
+          { !this.props.header && 
+            <div style={{width:12, paddingRight:4 , textAlign:'right', fontSize:12, color:'#65646d'}}>{this.props.index + 1}</div> 
+          }
+          <input style={{width:20, padding:0, borderRadius:4, width:48, height:27, boxSizing:'content-box',
+            fontSize: 18, border:'1px solid #ebebeb', textAlign:'center'}}
+            disabled={!this.props.lowBound || (this.props.header && this.props.lowBound == 3) }
+            value={this.state.low} 
+            onChange={(e)=>this.updateRowName(e, 'low')}
+            />
+          { !this.props.single && <div style={{width:10, textAlign:'center', color: Color.black1}}>-</div> }
+          { !this.props.single && <input style={{width:20, padding:0, borderRadius:4, width:48, height:27, boxSizing:'content-box',
+            fontSize: 18, border:'1px solid #ebebeb', textAlign:'center'}}
+            disabled={this.props.highBound==100}
+            value={this.state.high}
+            onChange={(e)=>this.updateRowName(e, 'high')}
+            />}
+        </div>
+        <div style={{display:'flex', justifyContent:'space-between', color: Color.black1, lineHeight:'12px',
+          padding: '5px 6px 0', borderTop:'1px solid #dedede'}}>
+          <div onClick={this.cancelUpdatingRowName} className='clickable' >
+          {t('Cancel')}
           </div>
-          <div className="button-div">
-          {'Cancel'}
-          </div>          
+          <div onClick={this.confirmUpdatingRowName}
+            className='clickable'
+            style={{color: Color.themeBlue}}>
+          {t('Ok')}
+          </div>
         </div>
       </div>
     );
