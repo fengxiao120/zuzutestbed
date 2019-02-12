@@ -151,10 +151,10 @@ class Zuzu2MonthDateRangePicker extends React.Component {
           </div>
           <div style={{marginLeft:40}}>{Mon[this.state.month]} {this.state.year} </div>
           <div>
-            <div onClick={()=>this.onMonthChange()} style={{cursor:'pointer', display:'inline-block',marginRight:20}}>
+            <div onClick={this.props.disableBefore > new Date(this.state.year, this.state.month, 1)?null:()=>this.onMonthChange()} style={{cursor:'pointer', display:'inline-block',marginRight:20}}>
               <i className='arrow left' />
             </div>           
-            <div onClick={this.props.disableAfter< new Date(this.state.year, this.state.month+1, 0)?null:()=>this.onMonthChange(true)} style={{cursor:'pointer', display:'inline-block',marginRight:20}}>
+            <div onClick={this.props.disableAfter < new Date(this.state.year, this.state.month+1, 0)?null:()=>this.onMonthChange(true)} style={{cursor:'pointer', display:'inline-block',marginRight:20}}>
               <i className='arrow right'/>
             </div>  
           </div>
@@ -187,11 +187,11 @@ class Zuzu2MonthDateRangePicker extends React.Component {
                 key={index}
                 className={( this.state.selectedRange.includes(new Date(Date.UTC(this.state.year, this.state.month, item)).getTime())?'selected ' :'normal ') 
                 + (this.state.daysInHoveredRange.includes(new Date(Date.UTC(this.state.year, this.state.month, item)).getTime())?'hovered ':'')
-                + (this.props.disableAfter< Date.UTC(this.state.year, this.state.month, item) || this.state.disabledDays.includes(new Date(Date.UTC(this.state.year, this.state.month, item)).getTime())?'disabled ' :'')
+                + (this.props.disableBefore > Date.UTC(this.state.year, this.state.month, item) || this.props.disableAfter< Date.UTC(this.state.year, this.state.month, item) || this.state.disabledDays.includes(new Date(Date.UTC(this.state.year, this.state.month, item)).getTime())?'disabled ' :'')
                 }
                 onMouseEnter={this.state.dayEnd?null:(e)=>this.onMouseEnter(e, this.state.month)}
                 onMouseLeave={this.state.dayEnd?null:this.onMouseLeave}
-                onClick={this.props.disableAfter< Date.UTC(this.state.year, this.state.month, item) || this.state.disabledDays.includes(new Date(Date.UTC(this.state.year, this.state.month, item)).getTime())?null:(e)=>this.onClick(e, this.state.month )} 
+                onClick={this.props.disableBefore > Date.UTC(this.state.year, this.state.month, item) || this.props.disableAfter< Date.UTC(this.state.year, this.state.month, item) || this.state.disabledDays.includes(new Date(Date.UTC(this.state.year, this.state.month, item)).getTime())?null:(e)=>this.onClick(e, this.state.month )} 
                 day={item}/>
             )}
           </div>

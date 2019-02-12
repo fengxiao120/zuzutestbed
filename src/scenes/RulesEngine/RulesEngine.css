@@ -1,4 +1,4 @@
-.revenue-management-rules .header-tab{
+.rules-engine .header-tab{
 	color: rgba(0, 0, 0, 0.54); 
 	height: 32px;
 	line-height: 32px;
@@ -7,7 +7,7 @@
 	cursor: pointer;
 }
 
-.revenue-management-rules .header-tab.in-focus{
+.rules-engine .header-tab.in-focus{
 	position: relative;
 	top: -3px;
 	height: 38px;
@@ -17,7 +17,7 @@
 	color: rgba(255, 255, 255, 0.96);
 }
 
-.revenue-management-rules .radio{
+.rules-engine .radio{
 	width: 20px;
 	height: 20px;
 	border-radius: 10px;
@@ -29,15 +29,15 @@
 	cursor: pointer;
 }
 
-.revenue-management-rules .radio .radio-inner{
+.rules-engine .radio .radio-inner{
 	display: none;
 }
 
-.revenue-management-rules .radio.active{
+.rules-engine .radio.active{
 	opacity: 1;
 }
 
-.revenue-management-rules .radio.active .radio-inner{
+.rules-engine .radio.active .radio-inner{
 	width: 10px;
 	height: 10px;
 	border-radius: 5px;
@@ -45,12 +45,12 @@
 	display: inline-block;
 }
 
-.revenue-management-rules input.rules-table-cell{
+.rules-engine input.rules-table-cell{
 	background: transparent;
 	height: 32px;
 }
 
-.revenue-management-rules input.rules-table-cell:focus{
+.rules-engine input.rules-table-cell:focus{
 	border: 1px solid #f36e33 !important;
 	background: #eff7ff;
 	font-size: 18px !important;
@@ -72,12 +72,12 @@
 	z-index: 2;
 }
 
-.revenue-management-rules .percentage-selector input:focus{
+.rules-engine .percentage-selector input:focus{
 	border: 1px solid #f36e33 !important;
 	outline: none;
 }
 
-.revenue-management-rules .row-name{
+.rules-engine .row-name{
 	position: relative;
     cursor: pointer;
     font-size: 12px;
@@ -89,22 +89,12 @@
 	border-radius: 2px;
 }
 
-.revenue-management-rules{
+.rules-engine{
 	font-size: 12px;
 }
 
-.revenue-management-rules .row-name.editing{
-	background: #eff7ff;
-	color: #337ab7;
-	cursor: pointer;
-}
 
-.revenue-management-rules .row-name.editing:hover{
-	background: #337ab7;
-	color: white;
-}
-
-.revenue-management-rules .edtiable-header{
+.rules-engine .edtiable-header{
 	height: 100%; 
 	display: flex; 
 	border-radius: 2px; 
@@ -117,35 +107,35 @@
     border: 1px solid transparent;
 }
 
-.revenue-management-rules .edtiable-header.editing{
+.rules-engine .edtiable-header.editing{
 	background: #eff7ff;
 	color: #337ab7;
 	border: 1px solid #dddddd;
 	cursor: pointer;
 }
 
-.revenue-management-rules .edtiable-header.editing:hover{
+.rules-engine .edtiable-header.editing:hover{
 	background: #337ab7;
 	color: white;
 }
 
-.revenue-management-rules i.zuzu-icon-cog:before{
+.rules-engine i.zuzu-icon-cog:before{
 	font-size: 16px;
 }
 
-.revenue-management-rules .calendar-view-container::-webkit-scrollbar{
+.rules-engine .calendar-view-container::-webkit-scrollbar{
     -webkit-appearance: none;
 }
 
-.revenue-management-rules .calendar-view-container::-webkit-scrollbar:vertical {
+.rules-engine .calendar-view-container::-webkit-scrollbar:vertical {
     width: 0;
 }
-.revenue-management-rules .calendar-view-container::-webkit-scrollbar:horizontal {
+.rules-engine .calendar-view-container::-webkit-scrollbar:horizontal {
     height: 0;
 }
 
 
-.revenue-management-rules .table-header{
+.rules-engine .table-header{
 	width: 80px; 
 	padding: 5px; 
 	display:flex;    
@@ -154,15 +144,25 @@
     cursor: pointer;
 }
 
-.revenue-management-rules .toggle-box{
+.rules-engine .toggle-box{
 	left: 3px;
 	transition: left 0.2s;
 }
-.revenue-management-rules .toggle-box.in-right{
+.rules-engine .toggle-box.in-right{
 	left: 34px;
 }
 
-.revenue-management-rules .toggle-box-item{
+.rules-engine .toggle-box1{
+	left: 3px;
+	background-color: #337ab7;
+	transition: left 0.2s, background-color 0.2s;
+}
+.rules-engine .toggle-box1.in-right{
+	background-color: #c92d28;
+	left: 34px;
+}
+
+.rules-engine .toggle-box-item{
 	display: inline-block;
 	border-radius: 10px;
 	height: 20px;
@@ -177,11 +177,11 @@
 	color: #9b9b9b;
 	transition: color 0.2s;
 }
-.revenue-management-rules .toggle-box-item.in-focus{
+.rules-engine .toggle-box-item.in-focus{
 	color: white;
 }
 
-.revenue-management-rules .down-x{
+.rules-engine .down-x{
 	border: solid; 
 	border-color: #337ab7 !important; 
 	transform: translateY(-3px) rotate(45deg); 
@@ -189,7 +189,68 @@
 	transition: transform 0.2s;
 }
 
-.revenue-management-rules .down-x.up-x{
+.rules-engine .down-x.up-x{
 	border-color: white !important; 
 	transform: translateY(2px) rotate(225deg);
+}
+
+@keyframes blinkbackground {
+  from {
+    background: #337ab7;
+    box-shadow: none;
+  }
+
+  to {
+    background: #439ad7;
+    box-shadow: rgba(51, 122, 183, 0.8) 3px 3px 20px 2px;
+  }
+}
+
+.rules-engine .blink-background{
+  animation-duration: 0.8s;
+  animation-name: blinkbackground;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.rules-engine .tick-x.editing{
+	border-color: #337ab7;
+}
+
+.rules-engine .tick-x.disabled{
+	border-color: #ddd;
+}
+
+.rules-engine .tick-x.normal{
+	border-color: #f36e33;
+}
+
+.rules-engine .mp-adjustment{
+	border-radius: 2px;
+	border: 1px solid transparent;
+	text-align: right;
+}
+
+.rules-engine .row-name.editing, .rules-engine .mp-adjustment.editing{
+	background: #eff7ff;
+	color: #337ab7;
+	cursor: pointer;
+	border: 1px solid #ddd;
+}
+
+.rules-engine .row-name.editing:hover, .rules-engine .mp-adjustment.editing:hover{
+	background: #337ab7;
+	color: white;
+}
+
+.cell-header{
+	color: #757575;
+	font-size: 12px;
+	margin-top: 8px;
+}
+
+.cell-content{
+	color: #4e4c5b;
+	font-size: 15px;
+	font-weight: 500;
 }

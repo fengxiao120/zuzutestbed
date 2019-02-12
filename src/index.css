@@ -30,7 +30,11 @@ html{
   position: relative;
 }
 
-.App .dropdown-container .dropdown-content{
+.App .clickable-dropdown-container{
+  position: relative;
+}
+
+.App .dropdown-content{
   position: absolute;
   display: none;
 }
@@ -39,14 +43,21 @@ html{
   display: block;
 }
 
-.light-blue-hover:hover{
+.App .clickable-dropdown-container.active .dropdown-content{
+  display: block;
+}
+
+.App .light-blue-hover{
+  cursor: pointer;
+}
+
+.App .light-blue-hover:hover{
   background: #eff7ff;
 }
 
-.light-blue-hover.active{
+.App .light-blue-hover.active{
   background: #eff7ff;
 }
-
 .right {
     transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
