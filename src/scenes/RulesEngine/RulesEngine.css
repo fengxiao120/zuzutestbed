@@ -1,3 +1,7 @@
+.rules-engine  *{
+	box-sizing: content-box;
+}
+
 .rules-engine .header-tab{
 	color: rgba(0, 0, 0, 0.54); 
 	height: 32px;

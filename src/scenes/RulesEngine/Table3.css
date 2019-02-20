@@ -1,0 +1,93 @@
+.rules-engine .table3-note{
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding: 0 30px 16px;
+	background: #f9f9f9;
+}
+
+.rules-engine .table3-cell-wrapper{
+	border-right: 1px solid #ebebeb;
+    border-bottom: 1px solid #ebebeb;	
+}
+
+.rules-engine .table3-cell{
+    border: 1px solid transparent;
+    line-height: 30px;
+    box-sizing: border-box;
+    cursor: pointer;
+    height: 32px;
+    text-align: center;
+    padding: 0px 3px;
+    position: relative;
+}
+
+.rules-engine .table3-cell.disabled{
+    color: #b7b7b7 !important;
+    cursor: auto;
+    background: #d8d8d8 !important;
+}
+
+.rules-engine .table3-cell.active{
+	background: #eff7ff !important;
+	border: 1px solid #f36f31;
+}
+
+.rules-engine input.type1:focus{
+	border: 1px solid #f36e33!important;
+    background: #eff7ff;
+    outline: none;
+}
+
+.rules-engine .table3-header-top-right{
+	cursor: pointer;
+	background: #e6e6e6;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    top: -12px;
+    right: -13px;
+    transform: rotate(45deg);	
+}
+
+.rules-engine .table3-header-bottom-left{
+	cursor: pointer;
+    background: #4d4d59;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    bottom: -10px;
+    left: -10px;
+    transform: rotate(45deg);	
+}
+
+.rules-engine .table3-header-top-right:hover{
+	background: #4d4d59;
+}
+
+.rules-engine .table3-cell-top-right{
+	display: none;
+}
+.rules-engine .table3-cell:hover .table3-cell-top-right{
+	display: block;
+}
+
+.rules-engine .table3-cell.disabled .table3-cell-top-right{
+	display: none;
+}
+
+.rules-engine .disabled-cell-info{
+	display: none;
+}
+
+.rules-engine .table3-cell.disabled .disabled-cell-info{
+	display: block;
+}
+
+.rules-engine .table3-cell-bottom-left{
+	display: none;
+}
+
+.rules-engine .table3-cell.disabled .table3-cell-bottom-left{
+	display: block;
+}

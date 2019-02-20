@@ -24,6 +24,9 @@ export default {
 	getRulesEngineData: (params) => {
         return FetchGet('/revenue-management/rule-engine/get-data', params)
 	},
+    getRecommendedPrices: (params) => {
+        return FetchGet('/base-price/calculate', params)
+    },    
     getRevenueManagementRules: (params) => {
         return FetchGet('/revenue-management/rule-engine/revenue-management-rules', params)
     },

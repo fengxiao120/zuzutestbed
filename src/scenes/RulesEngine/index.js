@@ -11,6 +11,8 @@ import Color from '../../Color'
 import EditableRange from './EditableRange'
 import AdjustmentEditor from './AdjustmentEditor'
 
+import Table3 from './Table3'
+
 const t = str => str
 
 const days = [ 'Sun', 'Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -1078,30 +1080,56 @@ class RulesEngine extends React.Component {
                 }    
 
                 <div style={{width:675}}>
-                  <div style={{background: Color.background, padding:'10px 25px', fontWeight:'bold', fontSize:13}}>
+                  <div style={{background: Color.background, padding:'10px 25px', fontWeight:'bold', fontSize:13, display:'flex'}}>
                     {t('Set floor sell rate')}<span style={{color:Color.orange}}>*</span>
+                    <div 
+                      onClick={()=>this.setState({show_floor_sell_rate: !this.state.show_floor_sell_rate})}
+                      style={{display:'inline-block', width:16, height:16, lineHeight:'16px', 
+                        verticalAlign:'middle', marginLeft:16, cursor:'pointer'}}>
+                      <i 
+                        style={{padding:4, border:'solid black', borderWidth:'0 2px 2px 0', borderColor: Color.themeBlue, display: 'inline-block',
+                          transform:this.state.show_floor_sell_rate?'translateY(0px) rotate(45deg)':'translateY(4px) rotate(225deg)'
+                        }}
+                      />
+                    </div>                    
                   </div>
-                  <div style={{background: Color.background, display:'flex'}}>
-                    { ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(item => 
-                        <div style={{borderRight:'1px solid #e3e3e3', flexBasis:'14.28%', flexGrow:1, textAlign:'right', lineHeight:1, padding:'2px 10px 16px 0'}}>
-                          {t(item)}
-                        </div>
-                      )
-                    }
-                  </div>
-                  <div style={{display:'flex', border:'solid #e3e3e3', borderWidth:'1px 0 1px 0'}}>
-                    { this.state.floor_sell_rates.map( (item, index) => 
-                        <div style={{borderRight:'1px solid #e3e3e3', flexBasis:'14.28%', flexGrow:1}}>
-                          <input className='rules-table-cell' 
-                            value={'$' + item} 
-                            onChange={(e)=>this.updateFloorSellRate(e, index)}
-                            onBlur={()=>this.onFloorSellRateBlur(index)}
-                            style={{ borderWidth:0, lineHeight:'31px', width:'100%', padding:'0px 10px 0px 0px', textAlign:'right',
-                              fontSize: 13, color:'black', boxSizing:'border-box'}}/>                        
-                        </div>
-                      )
-                    }
-                  </div>
+                  { this.state.show_floor_sell_rate && <div>
+                      <div style={{background: Color.background, display:'flex'}}>
+                        { ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(item => 
+                            <div style={{borderRight:'1px solid #e3e3e3', flexBasis:'14.28%', flexGrow:1, textAlign:'right', lineHeight:1, padding:'2px 10px 16px 0'}}>
+                              {t(item)}
+                            </div>
+                          )
+                        }
+                      </div>
+                      <div style={{display:'flex', border:'solid #e3e3e3', borderWidth:'1px 0 1px 0'}}>
+                        { this.state.floor_sell_rates.map( (item, index) => 
+                            <div style={{borderRight:'1px solid #e3e3e3', flexBasis:'14.28%', flexGrow:1}}>
+                              <input className='rules-table-cell' 
+                                value={'$' + item} 
+                                onChange={(e)=>this.updateFloorSellRate(e, index)}
+                                onBlur={()=>this.onFloorSellRateBlur(index)}
+                                style={{ borderWidth:0, lineHeight:'31px', width:'100%', padding:'0px 10px 0px 0px', textAlign:'right',
+                                  fontSize: 13, color:'black', boxSizing:'border-box'}}/>                        
+                            </div>
+                          )
+                        }
+                      </div>
+                      <div style={{lineHeight:'36px', paddingLeft:25, color: '#333333'}}>
+                        <span style={{color:Color.orange}}>*</span>
+                        {t('Tax inclusive')}
+                      </div>
+                      <div style={{display:'flex', paddingLeft:25}}>
+                        <div onClick={()=>this.setState({maintain_master_derived: !this.state.maintain_master_derived})} 
+                          style={{width:18, height:18, background: this.state.maintain_master_derived?Color.themeBlue:'white', 
+                            cursor:'pointer', boxSizing:'border-box', border:'2px solid #337ab7', color:'white', borderRadius:3}}>
+                          <i className="tick-x" style={{display: this.state.maintain_master_derived?null:'none', 
+                            marginLeft:4, marginBottom:1, borderWidth: '0 2px 2px 0', width: 4, height: 8 }}/>
+                        </div>                  
+                        <span style={{marginLeft:10}}>{t('If adjusting a master rate for floor prices, maintain master/derived relationship for rate plans.')}</span>
+                      </div>                    
+                    </div>
+                  }
                 </div>     
 
                 <button 
@@ -1113,6 +1141,9 @@ class RulesEngine extends React.Component {
             </div>
           }
         </div>
+        <Table3 
+          promotion={'CNY promotion'}
+        />
 
         <div className='experiment' style={{width: '100%', height: 800, padding:100, boxSizing:'border-box', background:'#eee'}}>
           <div style={{display:'flex'}}>
