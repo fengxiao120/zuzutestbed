@@ -45,7 +45,8 @@ class Table3CellPopup extends React.Component {
 
   confirm = () => {
     if( this.state.price_wi_tax > 0 )
-      this.props.onConfirm( this.state.price_wi_tax, this.state.update_derived, this.state.update_derived_prev_manual)
+      this.props.onConfirm( this.state.price_wi_tax, this.state.update_derived, this.state.update_derived_prev_manual, 
+        this.props.roomTypeIndex, this.props.rateIndex)
     else
       alert('Please enter an valid range')
   }

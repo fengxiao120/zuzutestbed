@@ -68,11 +68,12 @@
 .rules-engine .table3-cell-top-right{
 	display: none;
 }
+
 .rules-engine .table3-cell:hover .table3-cell-top-right{
 	display: block;
 }
 
-.rules-engine .table3-cell.disabled .table3-cell-top-right{
+.rules-engine .table3-cell.disabled .table3-cell-top-right, .rules-engine .table3-cell.active .table3-cell-top-right{
 	display: none;
 }
 

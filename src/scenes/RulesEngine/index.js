@@ -111,12 +111,12 @@ class RulesEngine extends React.Component {
   calendar_scroll_distance5 = 0
 
   componentDidMount = () => { 
-    window.addEventListener('click', this.collapsePercentageSelector)
+    //window.addEventListener('click', this.collapsePercentageSelector)
     this.getRulesEngineData()
   }
 
   componoentWillUnmount = () => {
-    window.removeEventListener('click', this.collapsePercentageSelector) 
+    //window.removeEventListener('click', this.collapsePercentageSelector) 
   }
 
   collapsePercentageSelector = (event) => {
