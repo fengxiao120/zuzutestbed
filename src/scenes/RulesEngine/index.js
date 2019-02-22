@@ -12,6 +12,7 @@ import EditableRange from './EditableRange'
 import AdjustmentEditor from './AdjustmentEditor'
 
 import Table3 from './Table3'
+import Table4 from './Table4'
 
 const t = str => str
 
@@ -37,13 +38,10 @@ class RulesEngine extends React.Component {
     last_request_month: new Date().getMonth(),
     month_in_display1: new Date().getMonth(),
     month_in_display2: new Date().getMonth(),
-    month_in_display3: new Date().getMonth(),
-    month_in_display4: new Date().getMonth(),
-    month_in_display5: new Date().getMonth(),
+
     table_collapsed1: true,
     table_collapsed2: true,
-    table_collapsed3: true,
-    table_collapsed4: true,
+    
     loading: false,
     all_room_types: true,
     all_rate_plans: true,
@@ -100,15 +98,16 @@ class RulesEngine extends React.Component {
     visibleDailyAdjustmentIndex: -1,
 
     floor_sell_rates: [0, 0, 0, 0, 0, 0, 0],
+
+    room_types: [],
+    tax_rate: 7,
   }
 
   loading = false
   calendar_lengths_list1 = []
   calendar_scroll_distance1 = 0
   calendar_scroll_distance2 = 0
-  calendar_scroll_distance3 = 0
-  calendar_scroll_distance4 = 0
-  calendar_scroll_distance5 = 0
+
 
   componentDidMount = () => { 
     //window.addEventListener('click', this.collapsePercentageSelector)
@@ -163,6 +162,45 @@ class RulesEngine extends React.Component {
           loaded: true, 
           vtr: response.vtr,
           market_pricing_data: this.state.market_pricing_data.concat(response.monthly_market_pricing_data),
+
+          room_types: this.flatRoomTypes([ //Purely for test
+            { room_type_name: 'room type 1', 
+              room_type_id: 1,
+              rate_plans:[
+                {rate_plan_name: 'rate plan 1.1 and some super long breakfast'}, 
+              ],
+              children: [
+                { room_type_name: 'room type 3', 
+                  room_type_id: 3,
+                  rate_plans:[
+                    {rate_plan_name: 'rate plan 3.1 super duper long breakfast'}, 
+                    {rate_plan_name: 'rate plan 3.2'}, 
+                  ]
+                },
+                { room_type_name: 'room type 4', 
+                  room_type_id: 4,
+                  rate_plans:[
+                    {rate_plan_name: 'rate plan 4.1'}, 
+                    {rate_plan_name: 'rate plan 4.2'}, 
+                  ]
+                },           
+              ]
+            },
+            { room_type_name: 'room type 2', 
+              room_type_id: 2,
+              rate_plans:[
+                {rate_plan_name: 'rate plan 2.1'}, 
+              ]
+            },   
+            { room_type_name: 'room type 5', 
+              room_type_id: 5,
+              rate_plans:[
+                {rate_plan_name: 'rate plan 5.1'}, 
+              ]
+            },                
+          ], [], 0),
+
+
         }, ()=>this.loading = false )  
       } else {
         this.setState({loading:false})  
@@ -376,6 +414,21 @@ class RulesEngine extends React.Component {
 
   cancelDayAdjustment = () => {
     this.setState({visibleDailyAdjustmentIndex: -1})
+  }
+
+  flatRoomTypes = ( room_types, flat_room_types, layer ) => {
+    room_types.forEach( room_type => {
+      flat_room_types.push({ 
+        name: room_type.room_type_name, 
+        id: room_type.room_type_id, 
+        layer: layer,
+        rate_plans: room_type.rate_plans,
+        collapsed: false,
+      })
+      if(room_type.children)
+        this.flatRoomTypes(room_type.children, flat_room_types, layer + 1)
+    })
+    return flat_room_types
   }
 
   render() {
@@ -1141,8 +1194,17 @@ class RulesEngine extends React.Component {
             </div>
           }
         </div>
+
         <Table3 
           promotion={'CNY promotion'}
+          taxRate={this.state.tax_rate}
+          roomTypes={this.state.room_types}
+        />
+
+        <Table4 
+          promotion={'CNY promotion'}
+          taxRate={this.state.tax_rate}
+          roomTypes={this.state.room_types}
         />
 
         <div className='experiment' style={{width: '100%', height: 800, padding:100, boxSizing:'border-box', background:'#eee'}}>

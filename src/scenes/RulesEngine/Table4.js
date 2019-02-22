@@ -1,6 +1,6 @@
 import React from "react"
 
-import Table3Column from './Table3Column'
+import Table4Column from './Table4Column'
 
 import PercentageToggle from '../../components/PercentageToggle'
 
@@ -14,7 +14,7 @@ const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct
 
 const t = str => str
 
-class Table3 extends React.Component {
+class Table4 extends React.Component {
   constructor(props) {
     super();
     this.state = {
@@ -127,8 +127,8 @@ class Table3 extends React.Component {
   }
 
   scrollLeftDirtyWork = () => {
-    document.getElementById('calendar-view-container3').scrollBy(-SCROLL_STEP,0)
-    this.calendar_scroll_distance = document.getElementById('calendar-view-container3').scrollLeft
+    document.getElementById('calendar-view-container4').scrollBy(-SCROLL_STEP,0)
+    this.calendar_scroll_distance = document.getElementById('calendar-view-container4').scrollLeft
     this.whichMonthToDisplay()
   }
 
@@ -137,11 +137,11 @@ class Table3 extends React.Component {
   }
 
   scrollRightDirtyWork = () => {
-    document.getElementById('calendar-view-container3').scrollBy(SCROLL_STEP,0)
-    this.calendar_scroll_distance = document.getElementById('calendar-view-container3').scrollLeft
+    document.getElementById('calendar-view-container4').scrollBy(SCROLL_STEP,0)
+    this.calendar_scroll_distance = document.getElementById('calendar-view-container4').scrollLeft
     this.whichMonthToDisplay()
     if( !this.loading && 
-      document.getElementById('calendar-view3').clientWidth - this.calendar_scroll_distance < 78*5 + document.getElementById('calendar-view-container3').clientWidth){
+      document.getElementById('calendar-view4').clientWidth - this.calendar_scroll_distance < 78*5 + document.getElementById('calendar-view-container4').clientWidth){
       this.getTable3FakeData()
     }
   }
@@ -199,6 +199,11 @@ class Table3 extends React.Component {
     return (
       <div style={{display:'flex', overflow: 'visible', position:'relative', flexWrap:'wrap'}}>
 
+        <div className='table-4-header' style={{background:'#f9f9f9', padding:'16px 20px', fontSize:18, width:'100%', height:56,
+          boxSizing:'border-box'}}>
+          {t('Required BAR to deliver recommended sell rates')}
+        </div>
+
         <div className='table3-note' style={{textAlign:'right', display:'flex', width:'100%'}}>
           {t('Change shown vs. ') + this.props.promotion + t(' sell rates')}:
           <PercentageToggle 
@@ -208,7 +213,7 @@ class Table3 extends React.Component {
           />
         </div>
 
-        <div style={{position:'absolute', left:234, top:46, textAlign:'right', background: Color.background,
+        <div style={{position:'absolute', left:234, top:102, textAlign:'right', background: Color.background,
           width:72, fontSize:12,  zIndex:1, display: this.state.table3_data.length?'block':'none'}}>
           { mon[new Date( this.state.month_in_display + '-01' ).getMonth()]} {new Date( this.state.month_in_display + '-01' ).getFullYear()}
         </div>
@@ -281,10 +286,10 @@ class Table3 extends React.Component {
           )}                      
         </div>
 
-        <div id='calendar-view-container3' className='calendar-view-container'
+        <div id='calendar-view-container4' className='calendar-view-container'
           style={{width: 'calc( 100% - 264px )', overflow:'hidden', display:'flex',
           marginBottom: -180, paddingBottom:180}}>
-          <div id='calendar-view3' className='calendar-view' style={{display:'flex', flexGrow:1}} >
+          <div id='calendar-view4' className='calendar-view' style={{display:'flex', flexGrow:1}} >
           { !this.state.table3_data.length && <div style={{flexGrow: 1}}>
               <div style={{height: 24, background: '#f9f9f9'}}>&nbsp;</div>
               <div style={{height: 42, background:'#f9f9f9'}}>&nbsp;</div>
@@ -293,7 +298,7 @@ class Table3 extends React.Component {
             </div>
           }          
           { this.state.table3_data.map( (day, day_index) => 
-            <Table3Column 
+            <Table4Column 
               key={day_index}
               dayIndex={day_index}
               day={day}
@@ -322,7 +327,6 @@ class Table3 extends React.Component {
           </div>
         </div>
 
-
         <div style={{width:'100%', display:'flex', lineHeight:'86px'}}>
           { [{content:'Available to sell', color:'#9bd0fe'}, {content:'Manually edited', color:'#ffa377'}, 
             {content:'Update derived', color:'#ffdfd0'}, 
@@ -339,4 +343,4 @@ class Table3 extends React.Component {
   }
 }
 
-export default Table3;
+export default Table4

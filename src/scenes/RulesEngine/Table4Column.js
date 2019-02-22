@@ -17,7 +17,7 @@ const CellTypeColorMapping = {
   disabled: '#f1f1f1',
 }
 
-class Table3Column extends React.Component {
+class Table4Column extends React.Component {
   state = {  
     visibleRTIndex: -1,
     visibleRateIndex: -1,
@@ -52,22 +52,14 @@ class Table3Column extends React.Component {
       <div style={{minWidth:78, flexGrow:1}}>
         <div style={{height:66, display:'flex', flexDirection:'column-reverse'}}>
           <div style={{position:'relative', background:day.disabled?'#e6e6e6':'#f9f9f9', 
-            overflow:'hidden', height:42, display:'flex', flexDirection:'column-reverse'}}>
-            <div onClick={()=>this.props.toggleColumn(dayIndex, false)} 
-              className='table3-header-bottom-left'
-              style={{ display: day.disabled?'block':'none'}}>
-            </div>                                                  
+            overflow:'hidden', height:42, display:'flex', flexDirection:'column-reverse'}}>                                             
             <div style={{textAlign:'right', paddingRight:12, fontSize:15, fontWeight:600,
               color:'#4d4d59',borderRight:'1px solid #ebebeb', }}>
               {day.date.slice(8,10)}
             </div>
             <div style={{justifyContent:'flex-end', paddingRight:12, fontSize:12, color:'#4d4d59', display:'flex',
             alignItems:'flex-end', 
-            borderRight: '1px solid white', position:'relative', height: 21,  overflow:'hidden'}}>
-              <div onClick={()=>this.props.toggleColumn(dayIndex, true)}
-                className='table3-header-top-right'
-                style={{ display: day.disabled?'none':'block' }}>                    
-              </div>     
+            borderRight: '1px solid white', position:'relative', height: 21,  overflow:'hidden'}}>  
               {days[new Date(day.date ).getDay()]}
             </div>                                       
           </div>
@@ -94,42 +86,17 @@ class Table3Column extends React.Component {
               <div key={rate_index} className={'table3-cell-wrapper'} 
                 style={{ display: !tableCollapsed && (!roomTypes[room_type_index] || !roomTypes[room_type_index].collapsed)?'block':'none' }}>
               <div 
-                onClick={day.disabled || rate.disabled? null:(e)=>this.showCellPopup(e, room_type_index, rate_index)}
                 className={'table3-cell ' + ( room_type_index == this.state.visibleRTIndex
                 && rate_index == this.state.visibleRateIndex && 'active ') + ((day.disabled|| rate.disabled)&&' disabled')}
                 style={{ background: CellTypeColorMapping[rate.type] }}>
                 { rate.value } 
                 <span style={{color:day.disabled || rate.disabled?'#b7b7b7':'red', fontSize: 9, marginLeft:5, }}>{ rate.change }</span>
-                { room_type_index == this.state.visibleRTIndex && rate_index == this.state.visibleRateIndex && 
-                  <Table3CellPopup 
-                    price={rate.value}
-                    taxRate={taxRate}
-                    roomTypeIndex={room_type_index}
-                    rateIndex={rate_index}
-                    onCancel={this.collapsePopup}
-                    onConfirm={this.editCell}
-                  />
-                }
                 <IconWithHover 
                   style={{position: 'absolute', right: 2, top: 2, color: '#333'}}
                   className='disabled-cell-info'
                   explanation={t('Shaded cells will not be applied when submitting price changes')}
                   position='right'
-                />
-                <CornerTriangle
-                  onClick={()=>this.props.disableCell(dayIndex, room_type_index, rate_index, true)}
-                  position='top-right'
-                  color='#e6e6e6'
-                  className='table3-cell-top-right'
-                />
-                { !day.disabled &&
-                  <CornerTriangle
-                    onClick={()=>this.props.disableCell(dayIndex, room_type_index, rate_index, false)}
-                    position='bottom-left'
-                    color='#4d4d59'
-                    className='table3-cell-bottom-left'
-                  />
-                }                        
+                />                       
               </div> 
               </div> 
             )}
@@ -140,4 +107,4 @@ class Table3Column extends React.Component {
   }
 }
 
-export default Table3Column
+export default Table4Column
