@@ -11,6 +11,8 @@ import Color from '../../Color'
 import EditableRange from './EditableRange'
 import AdjustmentEditor from './AdjustmentEditor'
 
+import HideShowAllHotels from '../../components/HideShowAllHotels'
+
 import Table3 from './Table3'
 import Table4 from './Table4'
 
@@ -26,6 +28,14 @@ const formatDate = (dateObject, placeholder, seperator) => {
   else
     return placeholder || ''
 }
+
+const TableLegend = ( props ) => (
+  <React.Fragment>
+    <div style={{background: props.backgroundColor, border:'1px solid ' + props.borderColor, 
+      width:18, height:12, borderRadius:2, marginRight:10}}></div>
+    <div>{props.text}</div>    
+  </React.Fragment>
+)
 
 class RulesEngine extends React.Component {
   state = {
@@ -101,6 +111,8 @@ class RulesEngine extends React.Component {
 
     room_types: [],
     tax_rate: 7,
+
+    table4_data: [],
   }
 
   loading = false
@@ -108,6 +120,42 @@ class RulesEngine extends React.Component {
   calendar_scroll_distance1 = 0
   calendar_scroll_distance2 = 0
 
+  room_types_in_layer = [ //Purely for test
+    { room_type_name: 'room type 1', 
+      room_type_id: 1,
+      rate_plans:[
+        {rate_plan_name: 'rate plan 1.1 and some super long breakfast'}, 
+      ],
+      children: [
+        { room_type_name: 'room type 3', 
+          room_type_id: 3,
+          rate_plans:[
+            {rate_plan_name: 'rate plan 3.1 super duper long breakfast'}, 
+            {rate_plan_name: 'rate plan 3.2'}, 
+          ]
+        },
+        { room_type_name: 'room type 4', 
+          room_type_id: 4,
+          rate_plans:[
+            {rate_plan_name: 'rate plan 4.1'}, 
+            {rate_plan_name: 'rate plan 4.2'}, 
+          ]
+        },           
+      ]
+    },
+    { room_type_name: 'room type 2', 
+      room_type_id: 2,
+      rate_plans:[
+        {rate_plan_name: 'rate plan 2.1'}, 
+      ]
+    },   
+    { room_type_name: 'room type 5', 
+      room_type_id: 5,
+      rate_plans:[
+        {rate_plan_name: 'rate plan 5.1'}, 
+      ]
+    },                
+  ]
 
   componentDidMount = () => { 
     //window.addEventListener('click', this.collapsePercentageSelector)
@@ -160,59 +208,17 @@ class RulesEngine extends React.Component {
           last_request_month: this.state.last_request_month + 1,
           loading: false,
           loaded: true, 
-          vtr: response.vtr,
           market_pricing_data: this.state.market_pricing_data.concat(response.monthly_market_pricing_data),
-
-          room_types: this.flatRoomTypes([ //Purely for test
-            { room_type_name: 'room type 1', 
-              room_type_id: 1,
-              rate_plans:[
-                {rate_plan_name: 'rate plan 1.1 and some super long breakfast'}, 
-              ],
-              children: [
-                { room_type_name: 'room type 3', 
-                  room_type_id: 3,
-                  rate_plans:[
-                    {rate_plan_name: 'rate plan 3.1 super duper long breakfast'}, 
-                    {rate_plan_name: 'rate plan 3.2'}, 
-                  ]
-                },
-                { room_type_name: 'room type 4', 
-                  room_type_id: 4,
-                  rate_plans:[
-                    {rate_plan_name: 'rate plan 4.1'}, 
-                    {rate_plan_name: 'rate plan 4.2'}, 
-                  ]
-                },           
-              ]
-            },
-            { room_type_name: 'room type 2', 
-              room_type_id: 2,
-              rate_plans:[
-                {rate_plan_name: 'rate plan 2.1'}, 
-              ]
-            },   
-            { room_type_name: 'room type 5', 
-              room_type_id: 5,
-              rate_plans:[
-                {rate_plan_name: 'rate plan 5.1'}, 
-              ]
-            },                
-          ], [], 0),
-
-
+          room_types: this.flatRoomTypes( this.room_types_in_layer, [], 0),
         }, ()=>this.loading = false )  
       } else {
         this.setState({loading:false})  
-        //ToastStore.error(t('There is some error'), 5000, 'update-error') 
         console.log(response)     
       }
     })
     .catch( error => {
       this.loading = false
       this.setState({loading:false})
-      console.log(error)
-      //ToastStore.error(t('There is some error'), 5000, 'update-error')
     })    
   } 
 
@@ -431,6 +437,26 @@ class RulesEngine extends React.Component {
     return flat_room_types
   }
 
+  onTable3DataChange = ( table4_data ) => this.setState( {table4_data: table4_data} )
+
+  onCellFocusOut = (e, row_index, col_index) => {
+    // console.log(e)
+    // console.log(e.target)
+    // console.log(row_index)
+    // console.log(col_index)
+  }
+
+  monitorEnter = ( e, row_index, col_index ) => {
+    if(e.key=='Enter'){
+      console.log(e.target)
+      e.target.blur()
+      // if( this.state.data[row_index][col_index] == '' ||  this.state.data[row_index][col_index] == '-' ) 
+      //   alert( t('Please enter a valid number') )
+      // else
+      //   this.onRulesChange()
+    }
+  }
+
   render() {
     console.log('rendering')
     return (
@@ -439,27 +465,16 @@ class RulesEngine extends React.Component {
     		width={this.props.width}
     		history={this.props.history}
     		toggleWidth={this.props.toggleWidth}
-        root='Rates and availability'
-    		path={'/rates-and-availability'}
+        root='Rules engine'
+    		path={'/rules-engine'}
     	/>
     	<div className="App rules-engine"
         style={{width: 'calc(100% - ' + this.props.width + 'px )', display:'inline-block', verticalAlign:'top'}}> 
   		  <div style={{fontWeight:600, fontSize:36, lineHeight:'140px',
           textAlign:'center', height:140, borderBottom:'2px solid #ddd',
           background:'#def', fontFamily: "Raleway Webfont",}}>
-          This is R&A
+          This is Rules engine
   			</div>
-
-        <div style={{display:'flex', padding:25, flexWrap:'wrap'}}>
-        { this.state.deep.list.map( item => <div style={{margin:10, padding:4, background:'#eee'}}>{item}</div>)}
-        <button style={{width:'100%'}}
-          onClick={()=>{ 
-          const new_deep =  Object.assign({}, this.state.deep) //JSON.parse(JSON.stringify(this.state.deep)) 
-          new_deep.list = new_deep.list.concat([323, 54, 87])
-          console.log(new_deep.list)
-          this.setState({ deep: new_deep })
-        }}>Expand</button>        
-        </div>
 
         <div class="page-top-header" style={{padding:'40px 30px 10px', fontFamily:'Helvetica, sans-serif'}}>
           {t('Revenue management engine')}
@@ -611,15 +626,10 @@ class RulesEngine extends React.Component {
                   borderWidth:'0 2px 2px 0', left:0, top:-1, position:'relative'}}/>
               </div> 
               <div style={{borderRight:'1px solid #c0c0c0', height:24, textAlign:'left', paddingLeft: 34}}>
-                <span style={{cursor:'pointer', color:'#4e4c5b'}}
-                  onClick={()=>this.setState({table_collapsed1: !this.state.table_collapsed1})}>
-                  <span style={{fontSize:8, display:'inline-block', width:16,
-                    transform:this.state.table_collapsed1?'scale(1, 1.6)': 'scale(1.8, 1) translateY(-1px)' }}>
-                    {this.state.table_collapsed1?String.fromCharCode(9658):String.fromCharCode(9660)}
-                  </span>           
-                  { this.state.table_collapsed1?t('Show all hotels'):
-                    t('Hide all hotels')}
-                </span>              
+                <HideShowAllHotels
+                  toggle={()=>this.setState({table_collapsed1: !this.state.table_collapsed1})}
+                  collapsed={this.state.table_collapsed1}
+                />            
               </div>           
             </div>
             {  !this.state.table_collapsed1 && ['host name 1', 'host name 2', 'host name 3', 'host name 4',
@@ -689,14 +699,14 @@ class RulesEngine extends React.Component {
                       </div>
                     </div> 
                   )}   
-                  <div style={{height:45, boxSizing:'border-box', padding:'5px 8px', width:78, display: 'flex',
-                    flexDirection:'column-reverse', alignItems:'flex-end', fontSize: 13,
-                    border:'solid #ebebeb', borderWidth:'0 1px 1px 0'}}>
+
+                  <div className={'avg-cell' + (day.avg_fake?' fake':'')}>
                     {day.avg}
-                  </div>                                                                                                                         
-                </div>                
+                  </div>
+
+                </div>
               ))
-            }             
+            }
             </div>
           </div>
           <div style={{minWidth:14, textAlign:'center', height:60, background:'#f9f9f9', paddingRight:30}}>
@@ -713,7 +723,13 @@ class RulesEngine extends React.Component {
 
 
 
-
+        <div style={{padding:'20px 50px 30px', display:'flex', fontSize: 10, color: '#333333'}}>
+          <TableLegend
+            backgroundColor='#fff7e9'
+            borderColor='#f48256'
+            text={t('Market pricing analysis found no competitive rates, so we have calculated a proxy value.')}
+          />
+        </div>
 
 
 
@@ -866,8 +882,6 @@ class RulesEngine extends React.Component {
             </div>
           </div>
         </div>
-
-
 
 
 
@@ -1109,6 +1123,8 @@ class RulesEngine extends React.Component {
                                 style={{ position:'relative',width:80,borderRight: '1px solid #f3f3f3', borderBottom:'1px solid #f3f3f3'}}>
                               <input className='rules-table-cell' 
                                 value={cell} 
+                                onBlur={ (e)=>this.onCellFocusOut(e, row_index, col_index)}
+                                onKeyPress={(e)=>this.monitorEnter(e, row_index, col_index)}
                                 onChange={(e)=>this.updateCell(e, row_index, col_index)}
                                 style={{ width:78, borderWidth:0, padding:0, lineHeight:'31px', 
                                   textAlign:'center', fontSize: 13, color:'black', boxSizing:'border-box'}}/>
@@ -1130,62 +1146,12 @@ class RulesEngine extends React.Component {
                         color: this.state.newRowBeingClicked?'#ffffff':Color.themeBlue, marginLeft:22, verticalAlign:'middle',
                         fontSize:16, padding:'2px 8px', lineHeight:1, display:'inline-block'}}>+</div>
                   </div>  
-                }    
+                }       
 
-                <div style={{width:675}}>
-                  <div style={{background: Color.background, padding:'10px 25px', fontWeight:'bold', fontSize:13, display:'flex'}}>
-                    {t('Set floor sell rate')}<span style={{color:Color.orange}}>*</span>
-                    <div 
-                      onClick={()=>this.setState({show_floor_sell_rate: !this.state.show_floor_sell_rate})}
-                      style={{display:'inline-block', width:16, height:16, lineHeight:'16px', 
-                        verticalAlign:'middle', marginLeft:16, cursor:'pointer'}}>
-                      <i 
-                        style={{padding:4, border:'solid black', borderWidth:'0 2px 2px 0', borderColor: Color.themeBlue, display: 'inline-block',
-                          transform:this.state.show_floor_sell_rate?'translateY(0px) rotate(45deg)':'translateY(4px) rotate(225deg)'
-                        }}
-                      />
-                    </div>                    
-                  </div>
-                  { this.state.show_floor_sell_rate && <div>
-                      <div style={{background: Color.background, display:'flex'}}>
-                        { ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(item => 
-                            <div style={{borderRight:'1px solid #e3e3e3', flexBasis:'14.28%', flexGrow:1, textAlign:'right', lineHeight:1, padding:'2px 10px 16px 0'}}>
-                              {t(item)}
-                            </div>
-                          )
-                        }
-                      </div>
-                      <div style={{display:'flex', border:'solid #e3e3e3', borderWidth:'1px 0 1px 0'}}>
-                        { this.state.floor_sell_rates.map( (item, index) => 
-                            <div style={{borderRight:'1px solid #e3e3e3', flexBasis:'14.28%', flexGrow:1}}>
-                              <input className='rules-table-cell' 
-                                value={'$' + item} 
-                                onChange={(e)=>this.updateFloorSellRate(e, index)}
-                                onBlur={()=>this.onFloorSellRateBlur(index)}
-                                style={{ borderWidth:0, lineHeight:'31px', width:'100%', padding:'0px 10px 0px 0px', textAlign:'right',
-                                  fontSize: 13, color:'black', boxSizing:'border-box'}}/>                        
-                            </div>
-                          )
-                        }
-                      </div>
-                      <div style={{lineHeight:'36px', paddingLeft:25, color: '#333333'}}>
-                        <span style={{color:Color.orange}}>*</span>
-                        {t('Tax inclusive')}
-                      </div>
-                      <div style={{display:'flex', paddingLeft:25}}>
-                        <div onClick={()=>this.setState({maintain_master_derived: !this.state.maintain_master_derived})} 
-                          style={{width:18, height:18, background: this.state.maintain_master_derived?Color.themeBlue:'white', 
-                            cursor:'pointer', boxSizing:'border-box', border:'2px solid #337ab7', color:'white', borderRadius:3}}>
-                          <i className="tick-x" style={{display: this.state.maintain_master_derived?null:'none', 
-                            marginLeft:4, marginBottom:1, borderWidth: '0 2px 2px 0', width: 4, height: 8 }}/>
-                        </div>                  
-                        <span style={{marginLeft:10}}>{t('If adjusting a master rate for floor prices, maintain master/derived relationship for rate plans.')}</span>
-                      </div>                    
-                    </div>
-                  }
-                </div>     
+                <div style={{height:20, margin:'22px 25px', borderBottom:'1px dashed #c3c3c3'}}>
+                </div>
 
-                <button 
+                <button onClick={(e)=>console.log('Save clicked:', e.target)} id='save-revenue-management-rules'
                   style={{background:Color.orange, width:93, textAlign:'center', fontSize:16, fontWeight:200, cursor:'pointer',
                     lineHeight:'35px', borderRadius:5, color:'white', margin:'10px 24px', outline:'none'}}>
                   {t('Save')}
@@ -1196,16 +1162,23 @@ class RulesEngine extends React.Component {
         </div>
 
         <Table3 
-          promotion={'CNY promotion'}
+          promotion={this.state.promotion}
           taxRate={this.state.tax_rate}
           roomTypes={this.state.room_types}
+          onTable3DataChange={this.onTable3DataChange}
         />
 
         <Table4 
-          promotion={'CNY promotion'}
-          taxRate={this.state.tax_rate}
           roomTypes={this.state.room_types}
+          table4Data={this.state.table4_data}
         />
+
+        <div style={{background:'#333', padding: '18px 36px', color:'white'}}>
+          <div style={{whiteSpace:'pre'}}>{t("Once you are happy with all of the ‘Recommended sell rates’ and the ‘Required BAR to deliver recommended sell rates’ prices, please submit the price changes,\
+\nand they will update the ‘Rates and availability>Calendar’ and be passed to the channels")}</div>
+          <button onClick={this.submitPriceChanges}
+            style={{background:Color.orange, color:'white', padding:'10px 20px', border:'none', fontSize:16, borderRadius:5, marginTop:15}}>{t('Submit price changes')}</button>
+        </div>
 
         <div className='experiment' style={{width: '100%', height: 800, padding:100, boxSizing:'border-box', background:'#eee'}}>
           <div style={{display:'flex'}}>

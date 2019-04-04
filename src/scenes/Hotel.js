@@ -40,7 +40,7 @@ class Hotel extends React.Component {
       booking_window_ytd: [3, 2, 1, 0, 2, 3, 1, 0],
       booked_ranges: [{}],
       checkin_ranges: [{}] ,
-      selected_range: {},
+      selected_range: {start: new Date(Date.UTC(2019, 1, 5)), end: new Date(Date.UTC(2019, 1, 55)) },
 		}
 	}
 
@@ -235,11 +235,12 @@ class Hotel extends React.Component {
                     year={new Date().getFullYear()}
                     month={new Date().getMonth()}
                     disabledRanges={[]}
-                    disableAfter={new Date()}
+                    disableAfter={ Date.now() + 12*86400000}
                     twoMonth={true}
                     monthInRight={true}
                     selectedRange={this.state.selected_range}
-                    onRangeSelected={(range)=>this.onRangeSelected(range)}                         
+                    onRangeSelected={(range)=>this.onRangeSelected(range)}
+                    onStartDaySelected={(range)=>this.onRangeSelected(range)}
                   />
                 </div>                
               </div> 

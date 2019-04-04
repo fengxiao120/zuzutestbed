@@ -260,3 +260,19 @@
 	font-size: 15px;
 	font-weight: 500;
 }
+
+.avg-cell{
+    width: 100%;	
+    height: 45px;
+    display: flex;
+    padding: 5px 8px;
+    align-items: flex-end;	
+    box-sizing: border-box;
+    flex-direction: column-reverse;
+    border-right: 1px solid #ebebeb;
+    border-bottom: 1px solid #ebebeb;	
+}
+
+.avg-cell.fake{
+	background: #fff7e9;
+}

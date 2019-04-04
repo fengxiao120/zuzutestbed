@@ -7,7 +7,7 @@ const nav_items = [{name:'Dashboard', icon:'zuzu-icon-home', link:'/dashboard'},
     {name:'Your hotel today', link:'/your-hotel-today',},
     {name:'All bookings', link:'/hotel/bookings',}
   ]},
-  {name:'Rates and availability',icon:'zuzu-icon-calendar', link:'/rates-and-availability'}, 
+  {name:'Rules engine',icon:'zuzu-icon-calendar', link:'/rules-engine'}, 
   {name:'Revenue management', icon:'zuzu-icon-dollar', link:'/revenue-management',
     childern:[
     {name:'Market pricing', link:'/revenue-management/market-pricing',},

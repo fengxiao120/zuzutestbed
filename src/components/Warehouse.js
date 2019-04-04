@@ -50,3 +50,20 @@ class Slider extends React.Component {
     )
   }
 }
+
+class Expand extends React.Component{
+  render() {
+    return (
+      <div style={{display:'flex', padding:25, flexWrap:'wrap'}}>
+      { this.state.deep.list.map( item => <div style={{margin:10, padding:4, background:'#eee'}}>{item}</div>)}
+      <button style={{width:'100%'}}
+        onClick={()=>{ 
+        const new_deep =  Object.assign({}, this.state.deep) //JSON.parse(JSON.stringify(this.state.deep)) 
+        new_deep.list = new_deep.list.concat([323, 54, 87])
+        console.log(new_deep.list)
+        this.setState({ deep: new_deep })
+      }}>Expand</button>        
+      </div>
+    )
+  }
+}

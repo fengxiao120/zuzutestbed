@@ -7,6 +7,9 @@ const formatDate = (dateObject, placeholder, seperator) => {
 		return placeholder
 }
 
-export default {
-	formatDate: formatDate
+const calcDayDiff = ( end_date, start_date ) => {
+  return ( new Date(end_date.getFullYear(), end_date.getMonth(), end_date.getDate()) - 
+    new Date(start_date.getFullYear(), start_date.getMonth(), start_date.getDate()) ) / 86400000 //this is the count of miniseconds in a day    
 }
+
+export { formatDate, calcDayDiff }

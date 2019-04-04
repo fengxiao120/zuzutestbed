@@ -11,10 +11,9 @@ const days = [ 'Sun', 'Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat']
 const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 const CellTypeColorMapping = {
-  available: '#9bd0fe',
-  manually_edited: '#ffa377',
+  manually_edited: '#ffdfd0',
   update_derived: '#ffdfd0',
-  disabled: '#f1f1f1',
+  disabled: '#9bd0fe',
 }
 
 class Table3Column extends React.Component {
@@ -22,6 +21,16 @@ class Table3Column extends React.Component {
     visibleRTIndex: -1,
     visibleRateIndex: -1,
   }
+
+  usBeingClicked = false
+
+  componentDidMount = () => { 
+    window.addEventListener('click', this.collapsePopup)
+  }
+
+  componentWillUnmount = () => { 
+    window.removeEventListener('click', this.collapsePopup)
+  }  
 
   shouldComponentUpdate(nextProps, nextState) {
     if( this.state != nextState || this.props.day != nextProps.day || this.props.occupancyType != nextProps.occupancyType || 
@@ -32,8 +41,13 @@ class Table3Column extends React.Component {
   }
 
   collapsePopup = (e) => {
-    // if(!e || !e.target.matches('.table3-cell, .table3-cell span'))
+    if(!this.usBeingClicked){
+      if(this.state.visibleRTIndex!=-1 || this.state.visibleRateIndex != -1)
+        this.setState({visibleRTIndex: -1, visibleRateIndex: -1})      
+    }
+    else if(!e.target.matches('.table3-cell, .table3-cell span'))
       this.setState({visibleRTIndex: -1, visibleRateIndex: -1})
+    this.usBeingClicked = false
   }
 
   showCellPopup = ( e, room_type_index, rate_index ) => {
@@ -47,9 +61,10 @@ class Table3Column extends React.Component {
   }
 
   render() {
+    console.log('table 3 column rendering')
     const { day, dayIndex, occupancyType, tableCollapsed, roomTypes, taxRate } = this.props
     return (
-      <div style={{minWidth:78, flexGrow:1}}>
+      <div style={{minWidth:78, flexGrow:1}} onClick={()=>{this.usBeingClicked=true}}>
         <div style={{height:66, display:'flex', flexDirection:'column-reverse'}}>
           <div style={{position:'relative', background:day.disabled?'#e6e6e6':'#f9f9f9', 
             overflow:'hidden', height:42, display:'flex', flexDirection:'column-reverse'}}>

@@ -18,108 +18,27 @@ class Table4 extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      show_popup: false,
-      show_revenue_management_rules: true,
-
-      year: new Date().getFullYear(),
-      month: new Date().getMonth(),
-      last_request_year: new Date().getFullYear(),
-      last_request_month: new Date().getMonth(),
       month_in_display:  new Date().getFullYear() + '-' + (new Date().getMonth() + 1).toString().padStart(2,0),
-      loading: false,
 
       room_types: [],
 
-      table3_data: [],
-
       occupancy_type: 'raw_occupancy',
-
-      visibleRTIndex: -1,
-      visibleDayIndex: -1,
-      visibleRateIndex: -1,
-
-      taxRate: 7,
     }
   }  
 
-  loading = false
-  parameter_loaded = false
   calendar_scroll_distance = 0
-
-  componentDidMount = () => { 
-    //this.getTable3Data()
-  }
 
   componentWillReceiveProps = (nextProps) => {
     if(this.props.roomTypes != nextProps.roomTypes ){
       this.setState({ room_types: nextProps.roomTypes }) 
-      console.log('wtf')
-      this.parameter_loaded = true
-      this.getTable3FakeData(2)
     }
   }
-
-  getTable3FakeData = (offset) => {
-    if(this.loading || !this.parameter_loaded) 
-      return
-    this.loading = true
-    // this.setState({loading:true})
-    RulesEngineApi.getRecommendedPrices({year: this.state.last_request_year, month: this.state.last_request_month + 1})
-    .then(response => {
-      console.log(response)
-      if(response.success){
-        this.setState({
-          last_request_month: this.state.last_request_month + (offset?offset:1),
-          loading: false,
-          table3_data: this.state.table3_data.concat(response.table3_data),
-        }, ()=>this.loading = false )  
-      } else {
-        this.setState({loading:false})  
-        console.log(response)     
-      }
-    })
-    .catch( error => {
-      this.loading = false
-      this.setState({loading:false})
-      console.log(error)
-    })    
-  } 
-
-  getTable3Data = () => {
-    if(this.loading)
-      return
-    this.loading = true
-    this.setState({loading:true})
-    RulesEngineApi.getRulesEngineData({year: this.state.last_request_year, month: this.state.last_request_month + 1})
-    .then(response => {
-      console.log(response)
-      if(response.success){
-        this.setState({
-          last_request_month: this.state.last_request_month + 1,
-          loading: false,
-          loaded: true, 
-          vtr: response.vtr,
-          table3_data: this.state.table3_data.concat(response.monthly_table3_data),
-        }, ()=>this.loading = false )  
-      } else {
-        this.setState({loading:false})  
-        //ToastStore.error(t('There is some error'), 5000, 'update-error') 
-        console.log(response)     
-      }
-    })
-    .catch( error => {
-      this.loading = false
-      this.setState({loading:false})
-      console.log(error)
-      //ToastStore.error(t('There is some error'), 5000, 'update-error')
-    })    
-  } 
 
   whichMonthToDisplay = ( ) => {
     const day_count = this.calendar_scroll_distance/78;
     const current_mon = new Date().getMonth()
-    if(this.state.month_in_display != this.state.table3_data[Math.floor(day_count)].date.slice(0,7))
-      this.setState( {month_in_display: this.state.table3_data[Math.floor(day_count)].date.slice(0,7)} )
+    if(this.state.month_in_display != this.props.table4Data[Math.floor(day_count)].date.slice(0,7))
+      this.setState( {month_in_display: this.props.table4Data[Math.floor(day_count)].date.slice(0,7)} )
   }
 
   scrollLeft = () => {
@@ -140,10 +59,6 @@ class Table4 extends React.Component {
     document.getElementById('calendar-view-container4').scrollBy(SCROLL_STEP,0)
     this.calendar_scroll_distance = document.getElementById('calendar-view-container4').scrollLeft
     this.whichMonthToDisplay()
-    if( !this.loading && 
-      document.getElementById('calendar-view4').clientWidth - this.calendar_scroll_distance < 78*5 + document.getElementById('calendar-view-container4').clientWidth){
-      this.getTable3FakeData()
-    }
   }
 
   onMouseOutLeft = () => {
@@ -153,30 +68,6 @@ class Table4 extends React.Component {
   onMouseOutRight = () => {
     clearInterval(this.setRightInterval)
   }
-
-  editCell = (price, update_derived, update_derived_prev_manual, room_type_index, rate_index, day_index) => {
-    const new_table3_data = this.state.table3_data.slice()
-    new_table3_data[day_index] = { ...new_table3_data[day_index] }
-    new_table3_data[day_index].rates[room_type_index].rp_rates[rate_index].type = 'manually_edited'
-    new_table3_data[day_index].rates[room_type_index].rp_rates[rate_index].value = price
-    new_table3_data[day_index].rates[room_type_index].rp_rates[rate_index].update_derived = update_derived
-    new_table3_data[day_index].rates[room_type_index].rp_rates[rate_index].update_derived_prev_manual = update_derived_prev_manual
-    this.setState({table3_data: new_table3_data})
-  }
-
-  toggleColumn = (day_index, disable) => {
-    const new_table3_data = this.state.table3_data.slice()
-    new_table3_data[day_index] = { ...new_table3_data[day_index], disabled:  disable}
-    this.setState({table3_data: new_table3_data})
-  }
-
-  disableCell = (day_index, room_type_index, rate_index, disable) => {
-    const new_table3_data = this.state.table3_data.slice()
-    new_table3_data[day_index] = { ...new_table3_data[day_index]}
-    new_table3_data[day_index].rates[room_type_index].rp_rates[rate_index] 
-      = { ...new_table3_data[day_index].rates[room_type_index].rp_rates[rate_index], disabled:  disable}
-    this.setState({table3_data: new_table3_data})    
-  } 
 
   toggleRoomType = (room_type_id) => {
     const new_room_types = this.state.room_types.slice()
@@ -195,7 +86,7 @@ class Table4 extends React.Component {
   }
 
   render() {
-    console.log('table3 rendering')
+    console.log('table4 rendering')
     return (
       <div style={{display:'flex', overflow: 'visible', position:'relative', flexWrap:'wrap'}}>
 
@@ -205,7 +96,7 @@ class Table4 extends React.Component {
         </div>
 
         <div className='table3-note' style={{textAlign:'right', display:'flex', width:'100%'}}>
-          {t('Change shown vs. ') + this.props.promotion + t(' sell rates')}:
+          {t('Changes shown vs. current ‘calendar view’ BAR rates as <%/#>')}:
           <PercentageToggle 
             style={{marginLeft: 16}}
             onPercentageClick={ (value)=> this.setState({change_percentage_based: value }) }
@@ -214,7 +105,7 @@ class Table4 extends React.Component {
         </div>
 
         <div style={{position:'absolute', left:234, top:102, textAlign:'right', background: Color.background,
-          width:72, fontSize:12,  zIndex:1, display: this.state.table3_data.length?'block':'none'}}>
+          width:72, fontSize:12,  zIndex:1, display: this.props.table4Data.length?'block':'none'}}>
           { mon[new Date( this.state.month_in_display + '-01' ).getMonth()]} {new Date( this.state.month_in_display + '-01' ).getFullYear()}
         </div>
 
@@ -248,9 +139,14 @@ class Table4 extends React.Component {
                     { item || 'None' }
                   </div> 
                 ) } 
-              </div>                        
-            </span>             
+              </div>
+            </span>
           </div>
+
+          <div style={{lineHeight:'33px', paddingLeft:10, marginLeft: 20, borderBottom:'1px solid #ebebeb', borderRight: '1px solid #ebebeb'}}>
+          {t('Hotel available to sell')}
+          </div>
+
           <div style={{height:33, textAlign:'left', marginLeft: 20, paddingLeft:14, borderBottom:'1px solid #ebebeb', lineHeight:'33px'}}>
             <span style={{cursor:'pointer', color:'#4e4c5b'}}
               onClick={this.collapseAll}>
@@ -290,14 +186,13 @@ class Table4 extends React.Component {
           style={{width: 'calc( 100% - 264px )', overflow:'hidden', display:'flex',
           marginBottom: -180, paddingBottom:180}}>
           <div id='calendar-view4' className='calendar-view' style={{display:'flex', flexGrow:1}} >
-          { !this.state.table3_data.length && <div style={{flexGrow: 1}}>
-              <div style={{height: 24, background: '#f9f9f9'}}>&nbsp;</div>
-              <div style={{height: 42, background:'#f9f9f9'}}>&nbsp;</div>
+          { !this.props.table4Data.length && <div style={{flexGrow: 1}}>
+              <div style={{height: 66, background: '#f9f9f9'}}>&nbsp;</div>
               <div style={{background: '#b9eab9', height: 34, borderBottom: '2px solid #aaaaaa'}}>&nbsp;</div>
               <div style={{height: 33, borderBottom: '1px solid #ebebeb'}}>&nbsp;</div>
             </div>
           }          
-          { this.state.table3_data.map( (day, day_index) => 
+          { this.props.table4Data.map( (day, day_index) => 
             <Table4Column 
               key={day_index}
               dayIndex={day_index}
@@ -305,10 +200,6 @@ class Table4 extends React.Component {
               occupancyType={this.state.occupancy_type}
               tableCollapsed={this.state.table_collapsed}
               roomTypes={this.state.room_types}
-              taxRate={this.state.taxRate}
-              toggleColumn={this.toggleColumn}
-              editCell={this.editCell}
-              disableCell={this.disableCell}
             />
           )}
           </div>    
@@ -328,9 +219,8 @@ class Table4 extends React.Component {
         </div>
 
         <div style={{width:'100%', display:'flex', lineHeight:'86px'}}>
-          { [{content:'Available to sell', color:'#9bd0fe'}, {content:'Manually edited', color:'#ffa377'}, 
-            {content:'Update derived', color:'#ffdfd0'}, 
-            {content:'Derived rate no longer linked to masrter rate', color:'#d8d8d8'}].map( item => 
+          { [{content:'Manually edited', color:'#ffdfd0'}, {content:'Derived rate no longer linked to masrter rate', color:'#9bd0fe'}, 
+            {content:'Rate change deactivated', color:'#d8d8d8'}].map( item => 
             <div>
               <div style={{display:'inline-block', 'background': item.color, width:19, height:13, borderRadius:2, 
                 verticalAlign:'middle', margin:'0 8px 0 40px', border:'1px solid #979797'}}></div>

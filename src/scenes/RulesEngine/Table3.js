@@ -21,10 +21,6 @@ class Table3 extends React.Component {
       show_popup: false,
       show_revenue_management_rules: true,
 
-      year: new Date().getFullYear(),
-      month: new Date().getMonth(),
-      last_request_year: new Date().getFullYear(),
-      last_request_month: new Date().getMonth(),
       month_in_display:  new Date().getFullYear() + '-' + (new Date().getMonth() + 1).toString().padStart(2,0),
       loading: false,
 
@@ -33,12 +29,6 @@ class Table3 extends React.Component {
       table3_data: [],
 
       occupancy_type: 'raw_occupancy',
-
-      visibleRTIndex: -1,
-      visibleDayIndex: -1,
-      visibleRateIndex: -1,
-
-      taxRate: 7,
     }
   }  
 
@@ -46,14 +36,17 @@ class Table3 extends React.Component {
   parameter_loaded = false
   calendar_scroll_distance = 0
 
-  componentDidMount = () => { 
-    //this.getTable3Data()
+  shouldComponentUpdate(nextProps, nextState) {
+    if( this.state != nextState || this.props.promotion != nextProps.promotion || this.props.taxRate != nextProps.taxRate || 
+      this.props.roomTypes != nextProps.roomTypes || this.props.onTable3DataChange != nextProps.onTable3DataChange )
+      return true
+    else
+      return false
   }
 
   componentWillReceiveProps = (nextProps) => {
     if(this.props.roomTypes != nextProps.roomTypes ){
       this.setState({ room_types: nextProps.roomTypes }) 
-      console.log('wtf')
       this.parameter_loaded = true
       this.getTable3FakeData(2)
     }
@@ -64,54 +57,34 @@ class Table3 extends React.Component {
       return
     this.loading = true
     // this.setState({loading:true})
-    RulesEngineApi.getRecommendedPrices({year: this.state.last_request_year, month: this.state.last_request_month + 1})
+    RulesEngineApi.getRecommendedPrices()
     .then(response => {
-      console.log(response)
-      if(response.success){
-        this.setState({
-          last_request_month: this.state.last_request_month + (offset?offset:1),
-          loading: false,
-          table3_data: this.state.table3_data.concat(response.table3_data),
-        }, ()=>this.loading = false )  
-      } else {
-        this.setState({loading:false})  
-        console.log(response)     
-      }
-    })
-    .catch( error => {
-      this.loading = false
-      this.setState({loading:false})
-      console.log(error)
-    })    
-  } 
+      response.json()
+      .then( actual_response => {
+        if(actual_response.success){
+          this.setState({
+            loading: false,
+            table3_data: this.state.table3_data.concat(actual_response.table3_data),
+          }, ()=>{ 
+            this.loading = false
+            this.props.onTable3DataChange(this.state.table3_data)
+          })  
+        } else {
+          this.setState({loading:false})  
+          console.log(actual_response)     
+        }        
+      })
+      .catch( error => {
+        this.loading = false
+        this.setState({loading:false})
+        console.log(error)
+      })  
 
-  getTable3Data = () => {
-    if(this.loading)
-      return
-    this.loading = true
-    this.setState({loading:true})
-    RulesEngineApi.getRulesEngineData({year: this.state.last_request_year, month: this.state.last_request_month + 1})
-    .then(response => {
-      console.log(response)
-      if(response.success){
-        this.setState({
-          last_request_month: this.state.last_request_month + 1,
-          loading: false,
-          loaded: true, 
-          vtr: response.vtr,
-          table3_data: this.state.table3_data.concat(response.monthly_table3_data),
-        }, ()=>this.loading = false )  
-      } else {
-        this.setState({loading:false})  
-        //ToastStore.error(t('There is some error'), 5000, 'update-error') 
-        console.log(response)     
-      }
     })
     .catch( error => {
       this.loading = false
       this.setState({loading:false})
       console.log(error)
-      //ToastStore.error(t('There is some error'), 5000, 'update-error')
     })    
   } 
 
@@ -140,10 +113,6 @@ class Table3 extends React.Component {
     document.getElementById('calendar-view-container3').scrollBy(SCROLL_STEP,0)
     this.calendar_scroll_distance = document.getElementById('calendar-view-container3').scrollLeft
     this.whichMonthToDisplay()
-    if( !this.loading && 
-      document.getElementById('calendar-view3').clientWidth - this.calendar_scroll_distance < 78*5 + document.getElementById('calendar-view-container3').clientWidth){
-      this.getTable3FakeData()
-    }
   }
 
   onMouseOutLeft = () => {
@@ -161,13 +130,13 @@ class Table3 extends React.Component {
     new_table3_data[day_index].rates[room_type_index].rp_rates[rate_index].value = price
     new_table3_data[day_index].rates[room_type_index].rp_rates[rate_index].update_derived = update_derived
     new_table3_data[day_index].rates[room_type_index].rp_rates[rate_index].update_derived_prev_manual = update_derived_prev_manual
-    this.setState({table3_data: new_table3_data})
+    this.setState({table3_data: new_table3_data}, ()=> this.props.onTable3DataChange(this.state.table3_data) )
   }
 
   toggleColumn = (day_index, disable) => {
     const new_table3_data = this.state.table3_data.slice()
     new_table3_data[day_index] = { ...new_table3_data[day_index], disabled:  disable}
-    this.setState({table3_data: new_table3_data})
+    this.setState({table3_data: new_table3_data}, ()=> this.props.onTable3DataChange(this.state.table3_data) )
   }
 
   disableCell = (day_index, room_type_index, rate_index, disable) => {
@@ -175,7 +144,7 @@ class Table3 extends React.Component {
     new_table3_data[day_index] = { ...new_table3_data[day_index]}
     new_table3_data[day_index].rates[room_type_index].rp_rates[rate_index] 
       = { ...new_table3_data[day_index].rates[room_type_index].rp_rates[rate_index], disabled:  disable}
-    this.setState({table3_data: new_table3_data})    
+    this.setState({table3_data: new_table3_data}, ()=> this.props.onTable3DataChange(this.state.table3_data) )    
   } 
 
   toggleRoomType = (room_type_id) => {
@@ -281,7 +250,8 @@ class Table3 extends React.Component {
           )}                      
         </div>
 
-        <div id='calendar-view-container3' className='calendar-view-container'
+        <div onClick={()=>{console.log(this.state.table3_data)}}
+          id='calendar-view-container3' className='calendar-view-container'
           style={{width: 'calc( 100% - 264px )', overflow:'hidden', display:'flex',
           marginBottom: -180, paddingBottom:180}}>
           <div id='calendar-view3' className='calendar-view' style={{display:'flex', flexGrow:1}} >
@@ -300,7 +270,7 @@ class Table3 extends React.Component {
               occupancyType={this.state.occupancy_type}
               tableCollapsed={this.state.table_collapsed}
               roomTypes={this.state.room_types}
-              taxRate={this.state.taxRate}
+              taxRate={this.props.taxRate}
               toggleColumn={this.toggleColumn}
               editCell={this.editCell}
               disableCell={this.disableCell}
@@ -324,9 +294,8 @@ class Table3 extends React.Component {
 
 
         <div style={{width:'100%', display:'flex', lineHeight:'86px'}}>
-          { [{content:'Available to sell', color:'#9bd0fe'}, {content:'Manually edited', color:'#ffa377'}, 
-            {content:'Update derived', color:'#ffdfd0'}, 
-            {content:'Derived rate no longer linked to masrter rate', color:'#d8d8d8'}].map( item => 
+          { [{content:'Manually edited', color:'#ffdfd0'}, {content:'Derived rate no longer linked to masrter rate', color:'#9bd0fe'}, 
+            {content:'Rate change deactivated', color:'#d8d8d8'}].map( item => 
             <div>
               <div style={{display:'inline-block', 'background': item.color, width:19, height:13, borderRadius:2, 
                 verticalAlign:'middle', margin:'0 8px 0 40px', border:'1px solid #979797'}}></div>

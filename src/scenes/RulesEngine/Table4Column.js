@@ -11,10 +11,9 @@ const days = [ 'Sun', 'Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat']
 const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 const CellTypeColorMapping = {
-  available: '#9bd0fe',
-  manually_edited: '#ffa377',
+  manually_edited: '#ffdfd0',
   update_derived: '#ffdfd0',
-  disabled: '#f1f1f1',
+  disabled: '#9bd0fe',
 }
 
 class Table4Column extends React.Component {
@@ -47,6 +46,7 @@ class Table4Column extends React.Component {
   }
 
   render() {
+    console.log('Table4Column rendering')
     const { day, dayIndex, occupancyType, tableCollapsed, roomTypes, taxRate } = this.props
     return (
       <div style={{minWidth:78, flexGrow:1}}>
@@ -71,6 +71,9 @@ class Table4Column extends React.Component {
         <div style={{background: Color.themeGreen, lineHeight:'34px', textAlign:'right', fontSize:15, paddingRight:12,
           borderBottom:'2px solid #aaa', borderRight:'1px solid #eee'}}>
           {occupancyType && day.occupancy[occupancyType]}            
+        </div>
+        <div style={{lineHeight:'33px', textAlign:'right', paddingRight: 10, borderBottom:'1px solid #ebebeb', borderRight:'1px solid #ebebeb',}}>
+          111
         </div>
         <div style={{height:33, borderBottom:'1px solid #ebebeb',}}>
           &nbsp;

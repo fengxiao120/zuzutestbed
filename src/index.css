@@ -135,3 +135,7 @@ html{
 .App .clickable{
   cursor: pointer;
 }
+
+.App .hidden{
+  display: none;
+}

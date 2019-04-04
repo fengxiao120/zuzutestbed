@@ -20,12 +20,37 @@ const FetchGet = async function (url, params) {
         });
 }
 
+const FetchGet1 = async function (url, params) {
+    if(params)
+        url += ('?' + Object.keys(params).map( key =>{
+            if(Array.isArray(params[key]))
+                return params[key].map( item => (key + '[]=' + item).trim() ).join('&')
+            else
+                return (key+'='+params[key]).trim()
+        }).join('&'))
+
+    let request = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+    };
+
+    return fetch(API_ROOT + url, request)
+        .then((response)=>{
+            return response;
+        }, (error)=>{
+            return error
+        });
+}
+
 export default {
 	getRulesEngineData: (params) => {
         return FetchGet('/revenue-management/rule-engine/get-data', params)
 	},
     getRecommendedPrices: (params) => {
-        return FetchGet('/base-price/calculate', params)
+        return FetchGet1('/base-price/calculate', params)
     },    
     getRevenueManagementRules: (params) => {
         return FetchGet('/revenue-management/rule-engine/revenue-management-rules', params)

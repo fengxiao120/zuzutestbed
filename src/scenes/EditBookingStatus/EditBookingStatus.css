@@ -1,0 +1,619 @@
+.center-wrapper{
+    text-align: center;
+}
+
+.left-wrapper{
+    text-align: left;
+}
+
+.flex-wrap-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.no-overflow{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.popup-cancel{
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    top: -16px;
+    right: -16px;    
+    border-radius: 18px;
+    text-align: center;
+    font-weight: 200;
+    font-family: sans-serif;
+    line-height: 34px;
+    color: rgb(102, 102, 102);
+    background: white;
+    font-size: 24px;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 1px 5px 0;
+    z-index: 1;
+}
+
+/******************************************************************************************************/
+
+.ebs-card{
+    width: 330px;
+    height: 664px;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 1px 5px 0px;
+    background: rgb(250, 250, 250);
+    position: fixed;
+    left: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.ebs-card .fa{
+    font-size: 14px;
+}
+
+.ebs-card .fa.to-left{
+    margin-left: 10px;
+}
+
+.ebs-card .fa.to-left-l{
+    margin-left: 16px;
+}
+
+.ebs-card .fa.to-right{
+    margin-right: 10px;
+}
+
+.ebs-card .fa.to-right-s{
+    margin-right: 4px;
+}
+
+.ebs-card .fa.to-right-l{
+    margin-right: 16px;
+}
+
+.ebs-card .fa-pencil{
+    color: #ddd;
+}
+
+.ebs-card .fa-credit-card-alt{
+    color: #aaa;
+    font-size: 12px;
+}
+
+.ebs-card .fa-list-alt{
+    color: #aaa;
+    font-size: 14px;
+}
+
+.ebs-card .left-wrapper.fixed{
+    width: 188px;
+}
+
+.ebs-card .dropdown-triangle{
+    transform: scale(1.8, 1); 
+    display: inline-block; 
+    font-size: 6px;
+    margin-left: 10px;
+    vertical-align: top;
+}
+
+.ebs-card .dropdown-triangle.close{
+    margin-left: 4px;
+}
+
+.ebs-card .header{
+    height: 44px;
+    background: rgb(77, 77, 89);
+    border-radius: 8px 8px 0px 0px;
+    border-bottom: 2px solid white;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 1px 1px 0px;
+    display: flex;
+    color: white;
+}
+
+.ebs-card .ebs-card-content{
+    position: relative;
+    height: 618px;
+}
+
+.ebs-card .contact.dropdown-content{
+    background: white;
+    min-width: 130px;
+    border-radius: 4px;
+    border: 1px solid #337ab7;;
+    padding: 0px 10px 4px;
+    color: #4d4d59;
+    left: -8px;
+    z-index: 1;
+}
+
+.ebs-card .contact-header{
+    color: #757575;
+    font-size: 11px;
+    margin-top: 6px; 
+}
+
+.ebs-card .field-header{
+    color: #a2b2c1; 
+    font-size: 11px;
+    line-height: 18px;
+}
+
+.ebs-card .traveller-payments{
+    margin: 0px 16px;
+    background: white;
+    border-radius: 5px;
+    border: 1px solid #dadada;
+    padding: 10px 8px 10px 16px;
+}
+
+.ebs-card .payment-section1{
+    display: flex;
+    border-top: 1px solid #ddd;
+    color: #757575;
+    justify-content: space-between;
+    margin: 6px 16px 4px;
+    padding-top: 8px;
+    align-items: flex-end;
+}
+
+.ebs-card .payment-detail{
+    width: 33.333%;
+}
+
+.ebs-card .payment-detail-header{
+    color: #757575;
+}
+
+.ebs-card .payment-amount{
+    font-size: 18px;
+}
+
+.ebs-card .payment-amount.red{
+    color: #d83025;
+}
+
+.ebs-card .nrf-label{
+    color: #d9534f;
+    font-size: 10px;
+    text-align: right;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.ebs-card .payment-breakdown{
+    border: 1px solid #dadada;
+    background: white;
+    color: #9b9b9b;
+    font-size: 12px;
+    line-height: 24px;
+    width: 210px;
+    right: -10px;
+    top: 100%;
+    z-index: 1;
+}
+
+.ebs-card .payment-breakdown .flex:nth-child(1){
+    color: #9f9f9f;
+}
+
+.ebs-card .payment-breakdown .flex:nth-child(2n){
+    background: #f9f9f9;
+}
+
+.ebs-card .payment-breakdown .flex{
+    color: #4d4d59;
+}
+
+.ebs-card .payment-breakdown .width-116{
+    padding-left: 24px; 
+}
+
+.ebs-card .payment-breakdown .width-94{
+    text-align: center;
+}
+
+.ebs-card .payment-card-container{
+    position: absolute;
+    left: 100%;
+    top: 0;
+    height: 590px;
+    width: 378px;
+    background: #4d4d59;
+    color: white;
+    border-radius: 0 8px 8px 0;
+    padding: 140px 36px;
+    box-sizing: border-box;
+}
+
+.ebs-card .card-expires-in{
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.ebs-card .yellow-number{
+    font-size: 20px;
+    color: #ffd700;
+}
+
+.ebs-card .payment-card{
+    background: #f36f31;
+    height: 170px;
+    width: 306px;
+    border-radius: 9px;
+    padding: 70px 20px 20px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+.ebs-card .payment-card div{
+    position: relative;
+    z-index: 1;
+}
+
+.ebs-card .payment-card .payment-card-wtf{
+    position: absolute;
+    z-index: 0;
+    background: #f88253;
+    height: 170px;
+    width: 330px;
+    left: 44px;
+    bottom: -88px;
+    transform: rotate( -26deg );
+}
+
+.ebs-card .card-number{
+    font-weight: 200;
+    font-size: 25px;
+    line-height: 25px;
+}
+
+.ebs-card .card-name{
+    font-weight: 200;
+    font-size: 16px;
+    line-height: 40px;  
+}
+
+.ebs-card .cvv-container{
+    color: black;
+    background: white;
+    border-radius: 9px;
+    width: 64px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    margin: 8px 10px;
+}
+
+.ebs-card .cvv-number{
+    background: radial-gradient(black, white);
+    opacity: 0.4;
+    border-radius: 9px;
+    width: 64px;
+    height: 32px;
+}
+
+.ebs-card .cvv-button{
+    text-decoration: underline;
+    line-height: 48px;
+}
+
+.ebs-card .note-card-container{
+    display: flex;
+    overflow-x: auto;
+    width: 298px;
+    margin: 10px 16px;
+}
+
+.ebs-card .note-card-container::-webkit-scrollbar{
+    -webkit-appearance: none;
+}
+
+.ebs-card .note-card-container::-webkit-scrollbar:vertical {
+    width: 0px;
+}
+
+.ebs-card .note-card-container::-webkit-scrollbar:horizontal {
+    height: 7px;
+}
+
+.ebs-card .note-card-container::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+.ebs-card .note-card-container::-webkit-scrollbar-track { 
+    border-radius: 8px; 
+    background: #ddd;
+    margin: 3px 0;
+} 
+
+.ebs-card .note::-webkit-scrollbar{
+    -webkit-appearance: none;
+}
+
+.ebs-card .note::-webkit-scrollbar:vertical {
+    width: 10px;
+}
+
+.ebs-card .note::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+}
+
+.ebs-card .note::-webkit-scrollbar-track { 
+    border-radius: 0 0 8px 0; 
+} 
+
+.ebs-card .note-card-background.floating{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0 0 8px 8px;
+    background-color: rgba(0,0,0, 0.7);
+    z-index: 1;
+}
+
+.ebs-card .note-card{
+    background: white;
+    position: relative;
+    width: 264px;
+    border-radius: 5px;
+    margin: 0 8px 4px 2px;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.ebs-card .note-card-placeholder{
+    min-width: 264px;
+    height: 110px;
+    margin: 0 8px 4px 2px;
+}
+
+.ebs-card .note-card-background.floating .note-card{
+    width: 280px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);    
+}
+
+.ebs-card .note-card-background .note{
+    padding: 6px 10px;
+    max-height: 88px;
+    overflow: hidden;
+}
+
+.ebs-card .note-card-background .cancel{
+    display: none;
+}
+
+.ebs-card .note-card-background.floating .cancel{
+    display: block;
+    position: absolute;
+    width: 20px;
+    font-size: 30px;
+    font-weight: 200px;
+    font-family: "Times New Roman";
+    height: 20px;
+    line-height: 20px;
+    top: -30px;
+    right: -10px;
+    color: white;
+}
+
+.ebs-card .note-card-background.floating .note{
+    padding: 6px 10px;
+    max-height: 500px;
+    overflow: auto;
+}
+
+.ebs-card .note-card .note-header{
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.ebs-card .note-card .note-content{
+    color: #4d4d59;
+    margin-bottom: 20px;
+}
+
+.ebs-card .note-card .user-name{
+    color: #7fb4fb;
+    margin-right: 14px;
+    line-height: 24px;
+}
+
+.ebs-card .note-card .date{
+    color: #767676;
+    line-height: 24px;
+}
+
+.ebs-card .color-bar{
+    border-radius: 5px 5px 0 0;
+    height: 10px;
+}
+
+.ebs-card .color-bar.red{
+    background: #c92d28;
+}
+
+.ebs-card .color-bar.blue{
+    background: #7fb4fb;
+}
+
+.ebs-card .color-bar.yellow{
+    background: #ffd700;
+}
+
+
+.ebs-card .gradient-blocker {
+    background-image: linear-gradient(180deg,hsla(0,0%,100%,.1),#fff);
+    position: absolute;
+    height: 40px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.ebs-card .note-card-background.floating .gradient-blocker{
+    display: none;
+}
+
+.print.dropdown-content{
+    border: 1px solid #337ab7;
+    border-radius: 4px;
+    right: -4px;
+    top: 20px;
+    background: white;
+    color: #4d4d5a;
+    width: 242px;
+    padding: 4px 10px;
+    z-index: 1;
+}
+
+.print.dropdown-content div{
+    padding: 0 10px;
+    line-height: 26px;
+    border-bottom: 1px dotted #ddd;
+}
+
+.print.dropdown-content div:last-child{
+    border-bottom: none;
+}
+
+.ebs-card .status-and-acknowledgement{
+    margin: 0px 16px;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0px;
+    display: flex;    
+}
+
+.ebs-card .status-and-acknowledgement .dropdown-content{
+    border: 1px solid #337ab7;
+    width: 284px;
+    z-index: 1;
+    background: white;
+}
+
+.ebs-card .status-dropdown{
+    left: -22px;
+    top: 22px;
+}
+
+.ebs-card .status{
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+    height: 25px; 
+    line-height: 12px;
+    border-radius: 23px;
+    width: 100px;
+}
+
+.ebs-card .status.confirmed{
+    background: #1fa81f;
+    color: white;
+}
+
+.ebs-card .status.confirmed-modified{
+    background: #ffd700;
+}
+
+.ebs-card .acknowledgement-status-container{
+    border-radius: 23px; 
+    line-height: 25px; 
+    height: 25px; 
+    width: 136px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.ebs-card .acknowledgement-status-container.acknowledged{
+    color: white;
+    background: #1fa81f; 
+}
+
+.ebs-card .acknowledgement-status{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 12px;
+    width: 100px;
+    overflow: hidden;
+}
+
+.ebs-card .acknowledgement-status-container.re-acknowledged-needed{
+    background: #ffd700; 
+}
+
+.ebs-card .acknowledgement-status-container.unacknowledged{
+    background: #b9eab9; 
+}
+
+.ebs-card .status-and-acknowledgement .acknowledgement-button-dropdown{
+    left: -7px;
+    top: 28px;  
+    border: 1px solid #337ab7;
+    border-radius: 5px;
+    line-height: 24px;
+    padding: 10px 25px;
+    width: 96px;
+    text-align: left;
+    font-size: 13px;
+    color: #4d4d59;
+}
+
+.ebs-card .acknowledgement-dropdown{
+    right: -8px;
+    top: 22px;    
+}
+
+.ebs-card .flex-wrap-wrapper{
+    padding: 10px 12px 4px;
+    justify-content: space-between;
+}
+
+.ebs-card .clickable-dropdown-container:nth-child(n+2){
+    margin-left: 10px;
+}
+
+.ebs-card .flex-wrap-wrapper:nth-child(2n+1){
+    background: #f9f9f9;
+}
+
+.ebs-card .dropdown-content .left-wrapper{
+    width: 128px;
+    margin-bottom: 8px;
+}
+
+.ebs-card .status-label{
+    background: #e7ecf1;
+    line-height: 24px;
+}
+
+.ebs-card .status-header{
+    color: #9b9b9b;
+}
+
+/**************************************************************************************************/
+.flex{
+    display: flex;
+}
+
+.width-116{
+    width: 116px;
+    box-sizing: border-box;
+}
+
+.width-94{
+    width: 94px;
+    box-sizing: border-box;
+}

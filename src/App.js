@@ -8,6 +8,7 @@ import RulesEngine from './scenes/RulesEngine'
 import YourHotelToday from './scenes/YourHotelToday'
 import AllBookings from './scenes/AllBookings'
 import Promotions from './scenes/Promotions'
+import Payment from './scenes/Payment'
 import MarketPricing from './scenes/MarketPricing'
 import Hotel from './scenes/Hotel'
 import NotFound from './scenes/NotFound'
@@ -45,7 +46,13 @@ class App extends React.Component {
                 toggleWidth={this.toggleNavWidth}  
               />}
             />            
-            <Route path="/rates-and-availability" 
+            <Route path="/payments" exact 
+              render={(props) => <Payment {...props} 
+                width={this.state.width} 
+                toggleWidth={this.toggleNavWidth}  
+              />}
+            />
+            <Route path="/rules-engine" 
               render={(props) => <RulesEngine {...props}
                 width={this.state.width} 
                 toggleWidth={this.toggleNavWidth}  

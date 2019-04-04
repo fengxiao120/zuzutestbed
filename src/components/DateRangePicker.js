@@ -59,24 +59,30 @@ class Zuzu2MonthDateRangePicker extends React.Component {
   }
 
   getSelectedDays = ( range ) => {
-    if( !range.end ){
+    if( !range.start && !range.end ){
       return []
-    }
-    const start = range.start.getTime()
-    const end = range.end.getTime()
-    const length = (end - start)/86400000
-    const days = []
-    for( let i = 0; i < length + 1 ; i++ )
-      days.push(start + i * 86400000)
+    } else if ( range.start && !range.end ) {
+      return this.state.selectedRange
+    } else  {
+      const start = range.start.getTime()
+      const end = range.end.getTime()
+      const length = (end - start)/86400000
+      const days = []
+      for( let i = 0; i < length + 1 ; i++ )
+        days.push(start + i * 86400000)
 
-    return days   
+      return days        
+    }
   }
 
   onClick = (e, selectedMonth) => {
     if(!this.state.dayStart || this.state.dayEnd){
       const dayStart = new Date(Date.UTC(this.state.year, selectedMonth, e.target.getAttribute('name')))
       const dayStartTime = dayStart.getTime()
-      this.setState({selectedRange: [dayStartTime], dayStart: dayStart, dayEnd: null})
+      this.setState({selectedRange: [dayStartTime], dayStart: dayStart, dayEnd: null}, () => {
+        if(this.props.onStartDaySelected)
+          this.props.onStartDaySelected({start: dayStart, end: null})
+      })
     } 
     else{
       const d1 = this.state.dayStart
