@@ -13,6 +13,9 @@ import AdjustmentEditor from './AdjustmentEditor'
 
 import HideShowAllHotels from '../../components/HideShowAllHotels'
 
+import StayDateSurcharge from './StayDateSurcharge'
+
+
 import Table3 from './Table3'
 import Table4 from './Table4'
 
@@ -1125,6 +1128,7 @@ class RulesEngine extends React.Component {
                                 value={cell} 
                                 onBlur={ (e)=>this.onCellFocusOut(e, row_index, col_index)}
                                 onKeyPress={(e)=>this.monitorEnter(e, row_index, col_index)}
+                                onFocus={(e)=> e.target.select()}
                                 onChange={(e)=>this.updateCell(e, row_index, col_index)}
                                 style={{ width:78, borderWidth:0, padding:0, lineHeight:'31px', 
                                   textAlign:'center', fontSize: 13, color:'black', boxSizing:'border-box'}}/>
@@ -1156,7 +1160,13 @@ class RulesEngine extends React.Component {
                     lineHeight:'35px', borderRadius:5, color:'white', margin:'10px 24px', outline:'none'}}>
                   {t('Save')}
                 </button>
-              </div>            
+              </div>
+
+              <StayDateSurcharge
+                currencySymbol={'MYR'}
+                staySurchargeOnlyOnMarketPricing={this.state.stay_surcharge_only_on_market_pricing}
+                onStateChange={ (new_states)=>this.setState({...new_states}) }
+              />
             </div>
           }
         </div>

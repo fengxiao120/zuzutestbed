@@ -64,7 +64,7 @@ class Payment extends React.Component {
 		</div>
 		<div className='traveller-payments'>
 			<div style={{display:'flex', justifyContent:'space-between'}}>
-				<div>{t('Traveller payments')}</div>
+				<div className='black-header'>{t('Traveller payments')}</div>
 				<i onClick={ ()=>this.setState( {show_payment_card: !this.state.show_payment_card } )}
 					className='clickable fa fa-credit-card-alt' />
 				{ this.state.show_payment_card && 
@@ -92,7 +92,7 @@ class Payment extends React.Component {
 				</div>
 				<div className='payment-detail'>
 					<div className='payment-detail-header'>{t('Balance')}</div>
-					<div className='payment-amount red'>{ this.props.currencySymbol + this.props.balance}</div>
+					<div className='payment-amount red'>{ this.props.currencySymbol + (this.props.owed - this.props.settled) }</div>
 				</div>						
 			</div>		
 		</div>

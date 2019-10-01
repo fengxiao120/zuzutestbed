@@ -6,20 +6,32 @@ class Header extends React.Component {
   render() {
     return (    
       <div className='header'>
-        <div style={{ position:'relative', maxWidth:80, textAlign:'center', padding:'0 6px', display:'flex', alignItems:'center'}}>
+        <div className={'header-tab'}
+          onClick={ ()=>this.props.onClick('one-click-check-in') }>
           {t('One-click check-in')}
           { this.props.tab == 'one-click-check-in' && 
             <div style={{width: 'calc( 100% - 12px )', position:'absolute', background:'#f36f31', height:5, bottom:0 }}></div>
           }
         </div>
-        <div style={{ position:'relative', maxWidth:80, textAlign:'center', padding:'0 6px', display:'flex', alignItems:'center'}}>
+        <div className={'header-tab'}>
           {t('Complete check-in')}
+          { this.props.tab == 'complete-check-in' && 
+            <div style={{width: 'calc( 100% - 12px )', position:'absolute', background:'#f36f31', height:5, bottom:0 }}></div>
+          }           
         </div>   
-        <div style={{ position:'relative', maxWidth:80, textAlign:'center', padding:'0 6px', display:'flex', alignItems:'center'}}>
+        <div className={'header-tab ' + (this.props.noShowDisabled&&'disabled')}
+          onClick={ this.props.noShowDisabled?null:()=>this.props.onClick('no-show') }>
           {t('No show')}
+          { this.props.tab == 'no-show' && 
+            <div style={{width: 'calc( 100% - 12px )', position:'absolute', background:'#f36f31', height:5, bottom:0 }}></div>
+          }          
         </div>
-        <div style={{ position:'relative', maxWidth:80, textAlign:'center', padding:'0 6px', display:'flex', alignItems:'center'}}>
+        <div className={'header-tab ' + (this.props.cancelBookingDisable&&'disabled')}
+          onClick={ ()=>this.props.onClick('cancel-booking') }>
           {t('Cancel booking')}
+          { this.props.tab == 'cancel-booking' && 
+            <div style={{width: 'calc( 100% - 12px )', position:'absolute', background:'#f36f31', height:5, bottom:0 }}></div>
+          }          
         </div>                     
       </div>
     );

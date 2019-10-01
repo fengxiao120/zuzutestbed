@@ -38,6 +38,10 @@
 
 /******************************************************************************************************/
 
+.ebs-card *{
+    
+}
+
 .ebs-card{
     width: 330px;
     height: 664px;
@@ -48,6 +52,7 @@
     left: 10%;
     top: 50%;
     transform: translateY(-50%);
+    z-index: 5;
 }
 
 .ebs-card .fa{
@@ -89,7 +94,13 @@
 }
 
 .ebs-card .left-wrapper.fixed{
-    width: 188px;
+    min-width: 188px;
+    max-width: 188px;
+}
+
+.ebs-card .left-wrapper.fixed-right{
+    min-width: 110px;
+    max-width: 110px;
 }
 
 .ebs-card .dropdown-triangle{
@@ -100,7 +111,7 @@
     vertical-align: top;
 }
 
-.ebs-card .dropdown-triangle.close{
+.ebs-card .dropdown-triangle.close-x{
     margin-left: 4px;
 }
 
@@ -156,8 +167,12 @@
     color: #757575;
     justify-content: space-between;
     margin: 6px 16px 4px;
-    padding-top: 8px;
+    padding-top: 6px;
     align-items: flex-end;
+}
+
+.ebs-card .net-room-amount-to-hotel{
+    margin-bottom: 4px;
 }
 
 .ebs-card .payment-detail{
@@ -244,7 +259,7 @@
     height: 170px;
     width: 306px;
     border-radius: 9px;
-    padding: 70px 20px 20px;
+    padding: 60px 20px 20px;
     box-sizing: border-box;
     position: relative;
     overflow: hidden;
@@ -266,14 +281,56 @@
     transform: rotate( -26deg );
 }
 
-.ebs-card .card-number{
+.ebs-card .payment-card .flex{
+    align-items: center;
+    justify-content: center;
+}
+
+.ebs-card .payment-card .OTP{
+    font-size: 16px;
+    box-sizing: border-box;
+    width: 95px;
+    height: 46px;
+    border-radius: 4px;
+    border: none;
+}
+
+.ebs-card .payment-card .submit-otp{
+    font-size: 16px;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 0 20px;
+    line-height: 36px;
+    height: 36px;
+    border-radius: 4px;
+    background: white;
+    color: #337ab7;
+    border: 1px solid #337ab7;
+    margin-left: 10px;
+}
+
+.ebs-card .payment-card-container .cancel-cross{
+    position: absolute;
+    right: 16px;
+    top: 10px;
+    font-family: sans-serif;
     font-weight: 200;
+    line-height: 24px;
+    font-size: 24px; 
+}
+
+.ebs-card .send-otp{
+    margin-top: 16px;
+    text-align: center;
+    text-decoration: underline;
+}
+
+.ebs-card .card-number{
     font-size: 25px;
     line-height: 25px;
 }
 
 .ebs-card .card-name{
-    font-weight: 200;
     font-size: 16px;
     line-height: 40px;  
 }
@@ -300,6 +357,127 @@
 .ebs-card .cvv-button{
     text-decoration: underline;
     line-height: 48px;
+}
+
+.ebs-card .fa-warning{
+    color: red;
+    margin: 0 5px;
+}
+
+.ebs-card .maximum-cvv{
+    margin-top: 16px;
+}
+
+.ebs-card .none-spacer{
+    line-height: 36px;
+    font-size: 16px;
+}
+
+.ebs-card .traveller-details-container{
+    position: absolute;
+    left: 100%;
+    top: 0;
+    height: 590px;
+    width: 378px;
+    background: #fafafa;
+    border-radius: 0 8px 8px 0;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    color: #4d4d59;
+    overflow: auto;
+}
+
+.ebs-card .traveller-details-container::-webkit-scrollbar{
+    -webkit-appearance: none;
+}
+
+.ebs-card .traveller-details-container::-webkit-scrollbar:vertical {
+    width: 8px;
+}
+
+.ebs-card .traveller-details-container::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+}
+
+.ebs-card .flex-between{
+    width: 340px;
+}
+
+.float-label{
+    position: absolute;
+    top: 17px;
+    left: 13px;
+    color: #c0c0c0;
+}
+
+.float-label.z-index{
+    z-index: 2;
+}
+
+.asterisk{
+    color: #f36f31;
+}
+.edit-field-x{
+    box-sizing: border-box;
+    margin-top: 12px;
+    width: 340px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 15px;
+    padding: 21px 12px 5px;
+    line-height: 18px;
+    background: white;
+}
+
+.edit-field-x.half{
+    width: 168px;
+}
+
+select.edit-field-x{
+    -webkit-appearance: none;
+}
+
+.edit-field-x:focus{
+    border: 1px solid #f36f31;
+    outline: none;
+}
+
+.black-header{
+    font-size: 13px;
+    font-weight: bold;
+    color: #4d4d59;
+}
+
+.flex-between{
+    display: flex; 
+    justify-content: space-between;
+}
+
+.submit-button{
+    background: #f36e33;
+    color: white;
+    padding: 8px 24px;
+    outline: none;
+    font-size: 16px;
+    border-radius: 5px;
+    margin-top: 15px;
+    margin-right: 20px;
+    line-height: 1;
+}
+
+.close-cross{
+    font-family: sans-serif;
+    font-weight: 200;
+    line-height: 24px;
+    color: rgb(102, 102, 102);
+    font-size: 24px;    
+}
+
+.relative{
+    position: relative;
 }
 
 .ebs-card .note-card-container{
@@ -358,7 +536,7 @@
     bottom: 0;
     border-radius: 0 0 8px 8px;
     background-color: rgba(0,0,0, 0.7);
-    z-index: 1;
+    z-index: 2;
 }
 
 .ebs-card .note-card{
@@ -368,6 +546,7 @@
     border-radius: 5px;
     margin: 0 8px 4px 2px;
     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);
+    min-height: 110px;
 }
 
 .ebs-card .note-card-placeholder{
@@ -495,11 +674,16 @@
     display: flex;    
 }
 
+.ebs-card .status-and-acknowledgement .center-wrapper:nth-child(n+2){
+    margin-left: 10px;
+}
+
 .ebs-card .status-and-acknowledgement .dropdown-content{
     border: 1px solid #337ab7;
     width: 284px;
     z-index: 1;
     background: white;
+    color: #4d4d59;
 }
 
 .ebs-card .status-dropdown{
@@ -572,17 +756,13 @@
 }
 
 .ebs-card .acknowledgement-dropdown{
-    right: -8px;
+    right: -18px;
     top: 22px;    
 }
 
 .ebs-card .flex-wrap-wrapper{
     padding: 10px 12px 4px;
     justify-content: space-between;
-}
-
-.ebs-card .clickable-dropdown-container:nth-child(n+2){
-    margin-left: 10px;
 }
 
 .ebs-card .flex-wrap-wrapper:nth-child(2n+1){
@@ -603,9 +783,248 @@
     color: #9b9b9b;
 }
 
+.ebs-card-content-overlay{
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    height: 618px;
+    background: rgba(77, 77, 89, 0.6);
+    z-index: 2;
+    border-radius: 0 0 8px 8px;
+}
+
+.ebs-card-content-overlay.with-payment{
+    height: 340px;
+}
+
+.ebs-card .header-tab{
+    cursor: pointer;
+    position: relative;
+    max-width: 80px;
+    text-align: center;
+    padding: 0px 6px;
+    display: flex;
+    align-items: center;
+}
+
+.ebs-card .header-tab.disabled{
+    display: none;
+}
+
+.container1{
+    margin: 0 12px;
+    background: white;
+    padding: 12px 16px;
+    border-radius: 0 0 4px 4px;
+}
+
+.text1{
+    margin-top: 12px;
+}
+
+.submit-button.red{
+    padding: 10px 20px;
+    background: #d9534f;
+}
+
+.submit-button.blue{
+    padding: 10px 18px;
+    background: #337ab7;
+}
+
+.cancel-button{
+    cursor: pointer;
+    color:  #337ab7;
+    margin-top: 15px;
+    line-height: 36px;
+}
+
+.cancelled-booking{
+    text-align: center;
+    color: #d9534f;
+}
+
+.text2{
+    text-align: center;
+    color: #1fa81f;
+    line-height: 1;
+    margin-top: 8px;
+}
+/**************************************************************************************************/
+.ebs-card .space-between{
+    width: 340px;
+    margin-top: 10px;
+}
+
+.ebs-card .traveller-folio-headers{
+    margin-top: 10px;
+}
+
+.ebs-card .traveller-folio-direct-owe{
+    margin-top: 24px;
+    align-items: flex-end;
+}
+
+.ebs-card .add-one-more-button{
+    margin-top: 24px;
+}
+
+.ebs-card .spacer-1{
+    border-bottom: 1px solid #dadada;
+    margin: 16px 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.ebs-card .selection-tab-container{
+    margin-top: 16px;
+}
+
+.ebs-card .payment-details{
+    margin-left: 10px;
+}
+
+.ebs-card .save-traveller-payment{
+    margin-top: 10px;
+    padding: 0 24px;
+    line-height: 32px;
+    color: #337ab7;
+    border: 1px solid #337ab7;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.ebs-card .deposit-type-label{
+    width: 76px;
+    margin-left: 10px;
+}
+
+.ebs-card .deposit-type.flex{
+    align-items: center;
+    margin-right: 10px;
+}
+
+.carousel-container{
+    max-width: 346px;
+    overflow: auto;
+    margin: 10px 0 24px;
+    line-height: 28px;
+}
+
+.ebs-card .carousel-container::-webkit-scrollbar{
+    -webkit-appearance: none;
+}
+
+.ebs-card .carousel-container::-webkit-scrollbar:horizontal {
+    height: 10px;
+}
+
+.ebs-card .carousel-container::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    margin: 4px 0;
+    background-color: rgba(0,0,0,.5);
+}
+
+.deposit-item-container{
+    margin: 2px 0;
+}
+
+.deposit-q{
+    min-width: 240px;
+    margin-right: 4px;
+    background: #eff7ff;
+    padding: 8px 10px;
+}
+
+.deposit-q-col{
+    margin-right: 20px;
+}
+
+.deposit-q-values{
+    font-size: 15px;
+}
+
+.spacer-2{
+    height: 20px;
+}
+
+.complete-checkout-section{
+    border-top: 1px solid #ccc;
+    margin-top: 16px;
+    padding-top: 16px;
+}
+
+.checkout-button{
+    margin-top: 10px;
+    background: #f36f31;
+    padding: 0px 16px;
+    line-height: 36px;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    display: inline-block;
+}
+
+.tfna_payment_date_selector{
+    background: white;
+    z-index: 1;
+    left: -40px;
+    top: 46px;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    width: 220px;
+    text-align: center;
+}
+
+.DayPicker{
+    line-height: normal;
+}
+
+.DayPicker *:focus{
+    outline: none;
+}
+
+.ebs-card .DayPicker-Day.DayPicker-Day--selected{
+    background: #f36f31;
+    border-radius: 4px;
+}
+
+.dropdown-indicator{
+    position: absolute;
+    right: 10px;
+    top: 14px;
+    font-size: 20px;
+    color: #337ab7;
+}
+
 /**************************************************************************************************/
 .flex{
     display: flex;
+}
+
+.flex.vertical-center{
+    align-items: center;
+}
+
+.width-60{
+    width: 60px;
+    box-sizing: border-box;    
+}
+
+.width-70{
+    width: 70px;
+    box-sizing: border-box;    
+}
+
+.width-80{
+    width: 80px;
+    box-sizing: border-box;    
+}
+
+.width-94{
+    width: 94px;
+    box-sizing: border-box;
 }
 
 .width-116{
@@ -613,7 +1032,141 @@
     box-sizing: border-box;
 }
 
-.width-94{
-    width: 94px;
+.width-250{
+    width: 250px;
+    box-sizing: border-box;    
+}
+
+.size-10{
+    font-size: 10px;
+}
+
+.right-align{
+    text-align: right;
+}
+
+.blue{
+    color: #337ab7;
+}
+
+.gray{
+    color: #a2b2c1;
+}
+
+.space-between{
+    display: flex;
+    justify-content: space-between;
+}
+
+.add-one-more-button{
+    display: inline-block;
+    cursor: pointer;
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
+    background: #337ab7;
+    color: white;
+    border-radius: 19px;
+    text-align: center;
+    font-size: 24px;
+    font-family: "Times New Roman";
+}
+
+.selection-tab-container{
+    display: flex;
+    border-radius: 16px;
+    height: 34px;
+    border: 1px solid rgb(235, 235, 235);
+    background: #eff7ff;
+    color: #337ab7; 
+    padding: 0px 7px;
     box-sizing: border-box;
+}
+
+.selection-tab{
+    height: 32px;
+    line-height: 32px;
+    font-size:14px; 
+    padding: 0 16px;
+    cursor: pointer;
+}
+
+.selection-tab.in-focus{
+    position: relative;
+    top: -3px;
+    height: 38px;
+    line-height: 38px;
+    background: #337ab7;
+    border-radius: 18.5px;
+    color: rgba(255, 255, 255, 0.96);
+}
+
+.inline-block{
+    display: inline-block;
+}
+
+.radio-x{
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    border: 2px solid #337ab7;
+    box-sizing: border-box;
+    line-height: 18px;
+    text-align: center;
+    opacity: 0.54;
+    cursor: pointer;
+}
+
+.radio-x .radio-x-inner{
+    display: none;
+}
+
+.radio-x.active{
+    opacity: 1;
+}
+
+.radio-x.active .radio-x-inner{
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background: #337ab7;
+    display: inline-block;
+}
+
+.light-blue-background{
+    background: #eff7ff;
+}
+
+.tax-breakdown .dropdown-content{
+    border: 1px solid #337ab7;
+    border-radius: 4px;
+    right: -10px;
+    top: 44px;
+    background: white;
+    color: #9b9b9b;
+    width: 188px;
+    z-index: 1;
+    box-sizing: border-box;    
+    font-size: 12px;
+}
+
+.tax-breakdown-line{
+    border-bottom: 1px solid #9b9b9b;
+    padding: 2px 8px 4px;
+}
+
+.tax-breakdown-line:nth-last-child(1){
+    border-bottom: none;
+}
+
+.tax-breakdown input{
+    width: 50px;
+    margin-left: 1px;
+}
+
+.width-24{
+    width: 24px;
+    font-size: 10px;
+    box-sizing: border-box;
+    text-align: right;    
 }

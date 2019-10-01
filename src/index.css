@@ -139,3 +139,7 @@ html{
 .App .hidden{
   display: none;
 }
+
+.flex.between{
+  justify-content: space-between;
+}

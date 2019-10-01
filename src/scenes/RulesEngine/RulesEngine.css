@@ -276,3 +276,79 @@
 .avg-cell.fake{
 	background: #fff7e9;
 }
+
+/*********************************/
+.calendar-view-container{
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.calendar-view{
+    display: flex; 
+    flex-grow: 1;
+}
+/*********************************/
+.weird-oval-button{
+	border: 1px solid #337ab7;
+	border-radius: 36px;
+	padding: 5px 24px;
+	margin-right: 6px;
+	cursor: pointer;
+}
+
+.weird-oval-button.active{
+	background: #337ab7;
+	color: white;
+}
+
+.month-box{
+	min-width: 100px;
+	border: 1px solid #ccc;
+	color: #ccc;
+	cursor: pointer;
+	border-radius: 5px;
+	padding: 4px 6px;
+	margin-right: 4px;
+	background: white;
+}
+
+.month-box.active{
+	border: 1px solid #337ab7;
+	color: #337ab7;
+	background: #edf7ff;
+}
+
+.week-day-surcharge{
+	cursor: pointer;
+	width: calc( 14.285% - 6px );
+	position: relative;
+	margin-right: 6px;
+	margin-bottom: 30px;	
+}
+
+.empty-block{
+	width: calc( 14.285% - 6px );
+	margin-right: 6px;
+	height: 43px;
+}
+
+.flex.wrap{
+	flex-wrap: wrap;
+}
+
+.flex.start{
+	justify-content: flex-start;
+}
+
+.day-surcharge{
+	cursor: pointer;
+	width: calc( 14.285% - 6px );
+	position: relative;
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+	margin-right: 6px;
+	margin-bottom: 10px;
+}

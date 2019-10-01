@@ -1,14 +1,29 @@
 import React from "react"
 import { withNamespaces } from 'react-i18next'
 
+import EditBookingStatusApi from '../../api/EditBookingStatusApi'
+
 class PaymentCard extends React.Component {
 	state = {
-		cvv: 123,
+		resend: false,
+		cvv: 0,
 		show_cvv: false,
+		cvv_max_reached: false
 	}
 
 	requestCVV = () => {
-		this.setState( {show_cvv: true} )
+		EditBookingStatusApi.getCVV()
+		.then( response => {
+			if(response.success)
+				this.setState( {show_cvv: true, cvv: response.cvv} )
+			else
+				throw response
+		})
+		.catch( error => {
+			this.setState( { cvv_max_reached: true } )
+			console.log(error)
+		})
+		
 	}
 
 	insertHourAndMin = ( str ) => {
@@ -36,32 +51,22 @@ class PaymentCard extends React.Component {
 		const { t } = this.props
 		return ( 
 			<div className='payment-card-container'>
-				{ this.insertHourAndMin( t('card_details_expire_in_x_hours_y_mins') ) }
+				<div class='cancel-cross'>&times;</div>
+				<div className='card-expires-in'>
+					{t('OTP sent')}
+				</div>
 				<div className='payment-card'>
-					<div className='card-number'>
-						{this.formatCreditCardNumber(this.props.cardInfo.number)}
-					</div>
-					<div className='card-name'>
-						{this.props.cardInfo.name}
-					</div>
-					<div className='card-valid-thru'>
-						{t('VALID THRU')}&nbsp;{this.props.cardInfo.validThru}
-					</div>		
-					<div className='payment-card-wtf'></div>			
-				</div>
-				<div className='flex '>
-					<div className='cvv-container'>
-						{ this.state.show_cvv && this.state.cvv}
-						{ !this.state.show_cvv && <div className='cvv-number'></div>} 
-					</div>
-					<div>
-						<div onClick={this.requestCVV}
-							className='clickable cvv-button'>
-							{t('Click to view CVV')}
+					<div className='flex'>
+						<input className='OTP'/>
+						<div className='submit-otp'
+							onClick={this.submitOTP}>
+							{t('Submit')}
 						</div>
-						<div>{t('you_have_x_of_y_available_views', {x:3, y:4})}</div>
 					</div>
+					<div className='payment-card-wtf'></div>	
 				</div>
+				
+				<div className='send-otp'><span onClick={this.sendOTP}>{t(this.state.resend?'Resend OTP':'Send OTP')}</span></div>
 			</div>
 		)
   	}

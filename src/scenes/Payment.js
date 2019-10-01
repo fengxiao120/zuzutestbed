@@ -39,7 +39,7 @@ class Payment extends React.Component {
         root='Payments'
     		path={'/payments'}
     	/>
-    	<div className="App rules-engine"
+    	<div className="App"
         style={{width: 'calc(100% - ' + this.props.width + 'px )', display:'inline-block', verticalAlign:'top'}}> 
   		  <div style={{fontWeight:600, fontSize:36, lineHeight:'140px',
           textAlign:'center', height:140, borderBottom:'2px solid #ddd',
@@ -70,6 +70,37 @@ class Payment extends React.Component {
         )}
         { this.state.show_edit_booking_status && 
           <EditBookingStatus 
+            bookingDetails={{
+              acknowledgement_status: "unacknowledged",
+              booking_detail: "Booking.com-12546284565-12546284565",
+              booking_status: "confirmed",
+              cancel_policy: {
+                cancel_policy: "TestAutomationCancellationPolicy", 
+                cancel_status: "Refundable", 
+                remarks: "test automation cancellation policy", 
+                no_show_policy: "Follow cancellation policy"
+              },
+              channel_booking_id: "1236547854",
+              check_in_date: "2019-04-07 00:00:00",
+              check_out_date: "2019-04-10 00:00:00",
+              guest_count: 2,
+              notes: [],
+              owed: "0.00",
+              owed_formatted: "0",
+              room_number: "123-12546284565-12546284565",
+              rate_plan: "Room only-12546284565-12546284565",
+              room_type: "Anggrek Room-12546284565-12546284565",
+              room_type_id: 91,
+              settled: 0,
+              settled_formatted: "0",
+              country_code:'ID',
+              traveller_contact_number: "+00 0124578963-12546284565",
+              traveller_email: "gayana.p@eyepax.com",
+              traveller_id: "251478963-12546284565-12546284565",
+              traveller_first_name: "prasanna",
+              traveller_last_name: "777 zero",
+              zuzu_room_id: "12546284565-12546284565-01",        
+            }}
             onCancel={()=>this.setState({ show_edit_booking_status: false })}
           />
         }

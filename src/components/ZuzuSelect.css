@@ -1,0 +1,58 @@
+.zuzu-select-container{
+	box-sizing: border-box;
+	background: white;
+	z-index: 1;
+	padding: 8px 8px 4px;
+	border-radius: 4px;
+	border: 1px solid #337ab7;
+	width: 150px;
+	left: -1px;
+	top: 100%;
+}
+
+.zuzu-select-input{
+	box-sizing: border-box;
+	width: 132px;
+	padding: 8px;
+	border-radius: 6px;
+	outline: none;
+	border: 1px solid #ddd;
+}
+
+input.zuzu-select-input:focus{
+	outline: none;
+}
+
+.zuzu-select-options-body{
+	max-height: 200px;
+	overflow: auto;
+}
+
+.zuzu-select-options-body::-webkit-scrollbar{
+    -webkit-appearance: none;
+}
+
+.zuzu-select-options-body::-webkit-scrollbar:vertical {
+    width: 7px;
+}
+
+.ebs-card .note-card-container::-webkit-scrollbar:horizontal {
+    height: 0px;
+}
+
+.zuzu-select-options-body::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+.zuzu-select-options-body::-webkit-scrollbar-track { 
+    border-radius: 8px; 
+    background: #ddd;
+    margin: 3px 0px;
+} 
+
+.zuzu-select-option{
+	font-size: 12px;
+	line-height: 24px;
+}
