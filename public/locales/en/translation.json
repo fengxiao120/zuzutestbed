@@ -1,4 +1,15 @@
 {
   "Dashboard": "Dashboard",
-  "Reservations": "Reservations"
-}
+  "Reservations": "Reservations",
+  "acknowledged": "Acknowledged",
+  "unacknowledged": "Unacknowledged",
+  "re-acknowledged-needed": "Reacknowledged needed",
+  "acknowledged-action": "Revert",
+  "unacknowledged-action": "Acknowledged",
+  "re-acknowledged-needed-action": "Acknowledged",
+  "confirmed-modified": "Confirmed modified",
+  "confirmed": "Confirmed",
+  "card_details_expire_in_x_hours_y_mins": "Card details will expire in <x> hours, <y> min",
+  "you_have_x_of_y_available_views": "You have {{x}} of {{y}} available views",
+  "select_a_charge_type": "Select..."
+} 

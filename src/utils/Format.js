@@ -20,7 +20,7 @@ const calcDayDiff = ( end_date, start_date ) => {
     new Date(start_date.getFullYear(), start_date.getMonth(), start_date.getDate()) ) / 86400000 //this is the count of miniseconds in a day    
 }
 
-const formatCurrency = (amount, currency_code, currency_symbol, show_decimal, force_return_original) => {
+const formatCurrency = (amount, currency_code, currency_symbol, force_return_original) => {
 	if(isNaN(amount)){
 		if(force_return_original)
 			return amount
@@ -29,8 +29,9 @@ const formatCurrency = (amount, currency_code, currency_symbol, show_decimal, fo
 	}
 	let superscript = ''
 	let body = ''
-	let decimal_length = 0
+	let decimal_length = 2
 	if( currency_code == 'ID' || currency_code == 'IDR' ){
+		decimal_length = 0
 		superscript = amount%1000
 		amount = parseInt(amount/1000)
 		if(amount){
@@ -39,9 +40,7 @@ const formatCurrency = (amount, currency_code, currency_symbol, show_decimal, fo
 			amount = ''
 			superscript = parseInt(superscript)
 		}
-	} else if(show_decimal && amount.toString().includes('.')) {
-		decimal_length = Math.min(amount.toString().split('.')[1].length, 2)
-	}
+	} 
 
 	amount = amount && parseFloat(parseFloat(amount).toFixed(decimal_length)).toLocaleString('en-US', { minimumFractionDigits: decimal_length })
 
@@ -63,5 +62,10 @@ const formatDBTime = (dateObject, placeholder) => {
         return placeholder
 };
 
+const addDays = (date, days) => {
+  const result = new Date(date)
+  result.setDate(result.getDate() + days)
+  return result
+}
 
-export { formatDate, calcDayDiff, formatTime, formatCurrency, formatRequestDate, formatDBTime }
+export { formatDate, calcDayDiff, formatTime, formatCurrency, formatRequestDate, formatDBTime, addDays }

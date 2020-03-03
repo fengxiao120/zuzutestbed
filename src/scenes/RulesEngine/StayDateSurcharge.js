@@ -9,10 +9,11 @@ import RulesEngineApi from '../../api/RulesEngineApi'
 import Color from '../../Color'
 import { formatRequestDate } from '../../utils/Format'
 
+const MAX_DAYS_DEFAULT_BAR = 730 // two years
+const MAX_DAYS_MARKET_PRICE = 50
 const SCROLL_STEP = 12
 const SCROLL_INTERVAL = 16
-const NUM_OF_MONTH_IN_TWO_YEARS = 24
-const month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'Augest', 'September', 'October', 'November', 'December']
 const week = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ]
 
 class Day extends React.Component {
@@ -32,7 +33,7 @@ class Day extends React.Component {
 
 class StayDateSurcharge extends React.PureComponent {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       show_stay_surcharge: false,
       year: new Date().getFullYear(),
@@ -48,7 +49,22 @@ class StayDateSurcharge extends React.PureComponent {
       day_surcharges: [ { start: '2019-10-17', val: 10, type: '%' }, { start: '2019-10-28', val: 15, type: '#' }, { start: '2019-10-29', val: 12, type: '%' }, 
         { start: '2019-10-07', val: 233383, type: '#' }, { start: '2019-11-17', val: 13, type: '%' }, { start: '2019-11-18', val: 18, type: '#' }],
     }
-  }  
+    this.num_of_month = this.calcNumOfMonth(props)
+    this.today = new Date()
+    this.end_date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + (props.useMarketPricing?MAX_DAYS_MARKET_PRICE:MAX_DAYS_DEFAULT_BAR) - 1)
+  }
+
+  calcNumOfMonth = (props) => {
+    if(props.useMarketPricing){
+      const today = new Date()
+      const split_date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + MAX_DAYS_MARKET_PRICE - 1)
+      if(today.getFullYear()*12 + today.getMonth()+ 1 == split_date.getFullYear()*12 + split_date.getMonth())
+        return 2
+      else
+        return 3
+    } else
+      return 24
+  }
 
   scrollLeft = () => {
     this.setLeftInterval = setInterval(()=>this.scrollLeftDirtyWork(), SCROLL_INTERVAL)
@@ -76,6 +92,14 @@ class StayDateSurcharge extends React.PureComponent {
     clearInterval(this.setRightInterval)
   }
 
+  onMouseEnter = (e) => {
+    console.log(e)
+  }
+
+  onMouseLeave = (e) => {
+    console.log(e)
+  }   
+
   render() {
     const { t } = this.props
     return (
@@ -94,17 +118,6 @@ class StayDateSurcharge extends React.PureComponent {
         </div>
 
         { this.state.show_stay_surcharge && <div style={{ background: '#f9f9f9'}}>
-          <div className='flex' style={{padding: '0px 40px', background: '#f9f9f9'}}>
-            <div className={'weird-oval-button ' + (this.props.staySurchargeOnlyOnMarketPricing&&'active') }
-              onClick={()=>this.props.onStateChange({stay_surcharge_only_on_market_pricing: !this.props.staySurchargeOnlyOnMarketPricing})}>
-              {t("Apply only on days using 'Market Pricing'")}
-            </div>
-            <div className={'weird-oval-button ' + (!this.props.staySurchargeOnlyOnMarketPricing&&'active') }
-              onClick={()=>this.props.onStateChange({stay_surcharge_only_on_market_pricing: !this.props.staySurchargeOnlyOnMarketPricing})}>
-              {t("Apply on days using ‘Market Pricing’ and ‘Default BAR")}
-            </div>
-          </div>
-
           <div className='flex' style={{marginTop: 10}}>
             <div onMouseOver={()=>this.scrollLeft()} onMouseOut={()=>this.onMouseOutLeft()}
               style={{minWidth:40, cursor:'pointer', textAlign: 'center', lineHeight:'44px'}}>
@@ -112,7 +125,7 @@ class StayDateSurcharge extends React.PureComponent {
             </div>
             <div className='flex calendar-view-container' id='month-container'>
               <div className='calendar-view'>{
-              Array(NUM_OF_MONTH_IN_TWO_YEARS).fill(0).map( (item, index) => <div className={'month-box ' + (this.state.active_month === index && 'active')}
+              Array(this.num_of_month).fill(0).map( (item, index) => <div className={'month-box ' + (this.state.active_month === index && 'active')}
                 onClick={()=>this.setState({active_month: index})}>
                 <div>{ month[new Date(this.state.year, this.state.month + index, this.state.day).getMonth()] }</div>
                 <div>{ new Date(this.state.year, this.state.month + index, this.state.day).getFullYear() }</div>
@@ -153,18 +166,29 @@ class StayDateSurcharge extends React.PureComponent {
 
             { Array(new Date(this.state.year, this.state.month + this.state.active_month, 1).getDay()).fill(0).map((item, index)=><div className='empty-block' key={index}> </div>)}
 
-            { Array(new Date(this.state.year, this.state.month + 1, 0).getDate()).fill(0).map((day, index)=>index+1).map((day, index)=> {
-              const date = formatRequestDate( new Date(this.state.year, this.state.month + this.state.active_month, day) )
-              const day_surcharge_index = this.state.day_surcharges.findIndex( item => item.start === date )
+            { Array(new Date(this.state.year, this.state.month + this.state.active_month + 1, 0).getDate()).fill(0).map((day, index)=>index+1).map((day, index)=> {
+              const date = new Date(this.state.year, this.state.month + this.state.active_month, day) 
+              const date_str = formatRequestDate( date )
+              const day_surcharge_index = this.state.day_surcharges.findIndex( item => item.start === date_str )
               const day_surcharge = day_surcharge_index >=0 ? this.state.day_surcharges[day_surcharge_index].val + (this.state.day_surcharges[day_surcharge_index].type === '%'?'%':'') : '0'
+
+              const disabled = this.today.getTime() - date.getTime() > 86400000 || date.getTime() - this.end_date.getTime()> 0
               return (<div 
-                className='day-surcharge'
-                onClick={()=>this.setState({active_day_surcharge_index: index})}>
-                { day === 1 && <span style={{position: 'absolute', top: -20, fontWeight: 'bold'}}>
-                  { month[(this.state.month + this.state.active_month)%12] + ' ' + new Date(this.state.year, this.state.month + this.state.active_month, 1).getFullYear()}
-                </span>}
+                className={'day-surcharge ' + (disabled?'disabled':'')}
+                onMouseEnter={this.onMouseEnter}
+                onMouseLeave={this.onMouseLeave}
+                onClick={disabled?null:()=>this.setState({active_day_surcharge_index: index})}>
+                { day === 1 && 
+                      <div style={{background: '#b9eab9', position: 'absolute', top: -13, right:0, display: 'flex', overflow: 'hidden', lineHeight: '12px', fontSize: 8, color: '#4d4d59', minWidth: 80}}>
+                        <div style={{width: 20}}>
+                          <div style={{background: '#f9f9f9', width: 24, height: 14, transform: 'rotate( -30deg )', position: 'absolute', left: -10, top: -7}}></div>
+                          <div style={{background: '#f9f9f9', width: 24, height: 14, transform: 'rotate( 30deg )', position: 'absolute', left: -10, bottom: -7}}></div>
+                        </div>
+                        <div>{t('Market Pricing')}</div>
+                      </div>
+                }
                 <div style={{padding: '4px 6px 0'}}>
-                  <div style={{background: '#f36f31', color: 'white', borderRadius: 7, width: 14, height: 14, textAlign:'center', fontSize: 10}}>{day}</div>
+                  <div className='day-circle'>{day}</div>
                 </div>
                 <div className='flex between' style={{padding: '4px 6px 0'}}>
                   <span>{day_surcharge.includes('%')?'%':'$'}</span>
@@ -175,7 +199,7 @@ class StayDateSurcharge extends React.PureComponent {
                   surcharge={day_surcharge}
                   isWeekDaySurcharge={false}
                   onConfirm={(surcharge) => {
-                    const new_surcharge = { start: date, val: surcharge.amount.replace('%', ''), type: surcharge.amount.includes('%')?'%':'' }
+                    const new_surcharge = { start: date_str, val: surcharge.amount.replace('%', ''), type: surcharge.amount.includes('%')?'%':'' }
                     this.setState({
                       day_surcharges: day_surcharge_index >=0 ?
                         this.state.day_surcharges.slice(0, day_surcharge_index).concat(new_surcharge).concat(this.state.day_surcharges.slice(day_surcharge_index+1)):

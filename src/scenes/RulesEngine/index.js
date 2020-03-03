@@ -14,7 +14,7 @@ import AdjustmentEditor from './AdjustmentEditor'
 import HideShowAllHotels from '../../components/HideShowAllHotels'
 
 import StayDateSurcharge from './StayDateSurcharge'
-
+import AutoSubmitConfiguration from './AutoSubmitConfiguration'
 
 import Table3 from './Table3'
 import Table4 from './Table4'
@@ -480,7 +480,7 @@ class RulesEngine extends React.Component {
   			</div>
 
         <div class="page-top-header" style={{padding:'40px 30px 10px', fontFamily:'Helvetica, sans-serif'}}>
-          {t('Revenue management engine')}
+          {t('2019-10-55 33:00:11')}
         </div>           
 
         <div className='options1'
@@ -1163,6 +1163,7 @@ class RulesEngine extends React.Component {
               </div>
 
               <StayDateSurcharge
+                useMarketPricing={false}
                 currencySymbol={'MYR'}
                 staySurchargeOnlyOnMarketPricing={this.state.stay_surcharge_only_on_market_pricing}
                 onStateChange={ (new_states)=>this.setState({...new_states}) }
@@ -1186,11 +1187,21 @@ class RulesEngine extends React.Component {
         <div style={{background:'#333', padding: '18px 36px', color:'white'}}>
           <div style={{whiteSpace:'pre'}}>{t("Once you are happy with all of the ‘Recommended sell rates’ and the ‘Required BAR to deliver recommended sell rates’ prices, please submit the price changes,\
 \nand they will update the ‘Rates and availability>Calendar’ and be passed to the channels")}</div>
-          <button onClick={this.submitPriceChanges}
-            style={{background:Color.orange, color:'white', padding:'10px 20px', border:'none', fontSize:16, borderRadius:5, marginTop:15}}>{t('Submit price changes')}</button>
+          <div className='flex vertical-align'>
+            <button onClick={this.submitPriceChanges}
+              style={{background:Color.orange, color:'white', padding:'10px 20px', border:'none', fontSize:16, borderRadius:5, marginTop:15}}>{t('Submit price changes')}</button>
+
+            <div className={'clickable-dropdown-container ' + (this.state.show_auto_submit_configuration?'active':'')}
+              onClick={()=>this.setState({show_auto_submit_configuration: true})} style={{marginLeft:30, background: 'green'}}>
+              Turn on auto submission
+              <AutoSubmitConfiguration
+                style={{position: 'fixed', left: '50%', transform: 'translateX(-50%)', top: 20}}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className='experiment' style={{width: '100%', height: 800, padding:100, boxSizing:'border-box', background:'#eee'}}>
+        <div className='hidden' style={{width: '100%', height: 800, padding:100, boxSizing:'border-box', background:'#eee'}}>
           <div style={{display:'flex'}}>
             <div onClick={this.toggleOnOff}
               style={{color:this.state.on?'white':'rgba(0, 0, 0, 0.25)', background: this.state.on?Color.themeBlue:null,

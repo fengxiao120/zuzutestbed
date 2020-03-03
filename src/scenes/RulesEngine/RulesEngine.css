@@ -352,3 +352,34 @@
 	margin-right: 6px;
 	margin-bottom: 10px;
 }
+
+.day-surcharge.disabled{
+	cursor: default;
+	color: #ccc !important;
+}
+
+.day-circle{
+	background: #f36f31; 
+	color: white; 
+	border-radius: 7px; 
+	width: 14px; 
+	height: 14px; 
+	text-align: center; 
+	font-size: 10px;
+}
+
+.day-surcharge.disabled .day-circle{
+	background: #ccc;
+}
+
+#month-container{
+	width: calc( 100% - 80px );
+}
+
+.autos-submission-container{
+	background: white;
+	border: 1px solid #333;
+	border-radius: 4px;
+	width: 380px;
+	min-height: 600px;
+}

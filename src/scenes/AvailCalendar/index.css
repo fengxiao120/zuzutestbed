@@ -1,0 +1,194 @@
+.avail-calendar{
+	line-height: 25px
+}
+
+.avail-calendar *{
+	box-sizing: content-box;
+}
+
+.avail-calendar-header{
+	font-size: 34px;
+	color: black;
+	line-height: 1.2;
+	padding: 30px 20px;
+}
+
+.orange-date{
+	color: #f36f31;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.orange-date-wtf{
+	margin-left:10px;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.update-derived{
+	line-height: 15px;
+    height: 30px;
+    background: #656784;
+    color: white;
+    border-radius: 5px;
+    display: flex;
+    min-width: 70px;
+    padding: 0 10px 0 6px;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 20px;
+}
+
+
+.scroller-icon{
+	width: 50px;
+	text-align: center;
+	font-size: 24px;
+	cursor: pointer;
+	transform: scaleX(0.5);
+	display: inline-block;
+}
+
+.left.scroller-icon{
+	margin-left: 170px;
+}
+
+.left-panel{
+	width: 320px;
+}
+
+.spacer-1{
+	height: 50px;
+	line-height: 50px;
+	display: flex;
+	background: #f9f9f9;
+    align-items: center;
+}
+
+.right-column{
+	width: 50px;
+}
+
+.all-room-avail{
+	display: flex;
+	justify-content: space-between;
+	padding: 0 10px 0 20px;
+	height: 30px;
+	line-height: 30px;
+	border-right: 1px solid #e7ecf1;
+}
+
+.room-type-with-rate-plans{
+	padding-top: 23px;
+	margin-left: 20px;
+	border-right: 1px solid #e7ecf1;
+	border-top: 2px solid #337ab7;
+}
+
+.row-name{
+	padding: 0 10px;
+	display: flex;
+	line-height: 24px;
+	height: 25px;
+	box-sizing: border-box;
+	border-bottom: 1px solid #e7ecf1;
+}
+
+.row-name.room-type{
+	justify-content: space-between;
+}
+
+.room-type-name{
+	font-weight: bold;
+}
+
+.rate-plan{
+}
+
+.rate-plan.left-padding{
+	padding-left: 20px;
+}
+
+.expand-rate-plan{
+	color: #337ab7;
+	font-weight: bold;
+	width: 4px;
+	text-align: center;
+	box-sizing: content-box;
+	padding-right: 6px;
+	margin-bottom: 2px;
+	line-height: 23px;
+	cursor: pointer;
+}
+
+.calendar-body{
+	width: calc( 100% - 370px );
+	overflow: auto;
+}
+
+.calendar-cell{
+	text-align: right;
+	padding: 0 5px;
+	border-right: 1px solid #e7ecf1;
+	border-bottom: 1px solid #e7ecf1;
+	height: 25px;
+	box-sizing: border-box;
+}
+
+.empty-cell{
+	height: 25px;
+	border-right: 1px solid #e7ecf1;
+	box-sizing: border-box;
+}
+
+.calendar-cell.availability{
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+}
+
+.top-border{
+	border-top: 2px solid #337ab7;
+}
+
+.calendar-header-cell{
+	padding: 0 10px;
+	height: 50px;
+	background: #f9f9f9;
+}
+
+.last-column {
+  grid-column: -2 / -1;
+}
+
+
+
+
+/****************************************************************************************************************/
+.bold{
+	font-weight: bold;
+}
+
+.blue-select-box{
+	display: flex;
+	min-width: 18px;
+	height: 18px;
+	background: white;
+	cursor: pointer;
+	box-sizing: border-box !important;
+	border: 2px solid #337ab7;
+	color: white;
+	border-radius: 3px;
+}
+
+.blue-select-box.selected{
+	background: #337ab7;
+}
+
+.blue-select-box .tick-x{
+	margin-left: 5px;
+	margin-top: 1px;
+	border-width: 0 2px 2px 0;
+	width: 4px;
+	height: 8px;	
+}

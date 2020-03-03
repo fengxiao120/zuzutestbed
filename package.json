@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@n8tb1t/use-scroll-position": "^1.0.43",
     "@react-pdf/dom": "^0.7.6",
     "@react-pdf/renderer": "^1.0.0-alpha.25",
     "express": "^4.16.3",
@@ -14,6 +15,7 @@
     "moment-timezone": "^0.5.21",
     "namor": "^1.1.1",
     "react": "^16.5.2",
+    "react-alice-carousel": "^1.13.11",
     "react-beautiful-dnd": "^10.0.3",
     "react-date-range": "^1.0.0-beta",
     "react-day-picker": "^7.2.4",
@@ -29,7 +31,7 @@
     "react-select": "^2.1.2",
     "react-smooth-collapse": "^2.0.0",
     "react-table": "^6.8.6",
-    "react-toasts": "^2.0.13",
+    "react-toasts": "^3.0.6",
     "webfontloader": "^1.6.28"
   },
   "scripts": {

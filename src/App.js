@@ -5,6 +5,7 @@ import './FontAwesome.css'
 
 import Dashboard from './scenes/Dashboard'
 import RulesEngine from './scenes/RulesEngine'
+import AvailCalendar from './scenes/AvailCalendar'
 import YourHotelToday from './scenes/YourHotelToday'
 import AllBookings from './scenes/AllBookings'
 import Promotions from './scenes/Promotions'
@@ -47,7 +48,7 @@ class App extends React.Component {
               />}
             />            
             <Route path="/payments" exact 
-              render={(props) => <Payment {...props} 
+              render={(props) => <AvailCalendar {...props} 
                 width={this.state.width} 
                 toggleWidth={this.toggleNavWidth}  
               />}
