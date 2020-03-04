@@ -136,6 +136,16 @@
 	box-sizing: border-box;
 }
 
+.stop-sell{
+	background: #d9534f;
+	color: white;
+}
+
+.calendar-cell.rate-stop-sell{
+	background: #ff6561;
+	color: white;
+}
+
 .empty-cell{
 	height: 25px;
 	border-right: 1px solid #e7ecf1;
@@ -168,6 +178,10 @@
 /****************************************************************************************************************/
 .bold{
 	font-weight: bold;
+}
+
+.line-height-1{
+	line-height: 1;
 }
 
 .blue-select-box{

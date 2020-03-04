@@ -81,10 +81,10 @@ class LeftPanel extends React.Component {
           {this.props.roomTypes.map((room_type, index) => (
             <div key={index} className='room-type-with-rate-plans'>
               <div className="row-name room-type">
-                <div className="room-type-name">
+                <div className="room-type-name line-height-1">
                     {room_type.name}
                 </div>
-                <span>
+                <span className='line-height-1'>
                   {t('Availability')}
                 </span>
               </div>

@@ -1,5 +1,6 @@
 import React from 'react'
 import { withNamespaces } from 'react-i18next'
+import classNames from 'classnames'
 import { formatCurrency } from '../../utils/Format'
 
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -11,15 +12,27 @@ class CalendarRow extends React.PureComponent {
       <React.Fragment>
         {(this.props.skipped > 0) && <div style={{ gridColumnStart: (this.props.skipped ) }}>&nbsp;</div>}
         { this.props.availability.map( (dayData, index) => <div 
-          key={index} 
-          className={(index === this.props.availability.length - 1) ? 'last-column empty-cell top-border' : 'empty-cell top-border'}>
+          key={index}
+          className={classNames(
+            'empty-cell top-border',
+            { 
+              'last-column': index === this.props.availability.length - 1,
+              'stop-sell': !dayData.hotel_rate_plans_availabilities.filter(rate_plan_avail => rate_plan_avail.is_allow_to_sell).length
+            }
+          )}>          
            &nbsp;
           </div>)
         }      
         {(this.props.skipped > 0) && <div style={{ gridColumnStart: (this.props.skipped ) }}>&nbsp;</div>}
         { this.props.availability.map( (dayData, index) => <div 
           key={index} 
-          className={(index === this.props.availability.length - 1) ? 'last-column calendar-cell bold' : 'calendar-cell bold'}>
+          className={classNames(
+            'calendar-cell bold line-height-1',
+            { 
+              'last-column': index === this.props.availability.length - 1,
+              'stop-sell': !dayData.hotel_rate_plans_availabilities.filter(rate_plan_avail => rate_plan_avail.is_allow_to_sell).length
+            }
+          )}>
            {dayData.available_count}
           </div>)
         }
@@ -33,7 +46,13 @@ class CalendarRow extends React.PureComponent {
                 {
                   rate_data.rates_by_rate_plan.map( (dayData, index) => <div 
                   key={index} 
-                  className={(index === rate_data.rates_by_rate_plan.length - 1) ? 'last-column calendar-cell' : 'calendar-cell'}>
+                  className={classNames(
+                    'calendar-cell',
+                    { 
+                      'last-column': index === rate_data.rates_by_rate_plan.length - 1,
+                      'rate-stop-sell': !this.props.availability[index].hotel_rate_plans_availabilities.find( rate_plan => rate_plan.hotel_rate_plan_id === rate_data.rate_plan_id).is_allow_to_sell
+                    }
+                  )}>
                    {formatCurrency(dayData.price_with_tax, 'SG', '')}
                   </div>)              
                 }

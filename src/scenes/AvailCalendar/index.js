@@ -37,7 +37,7 @@ class AvailCalendar extends React.Component {
     super(props)
     this.state = {
       loading: false,
-      today: new Date(),
+      today: new Date('2020-03-11'),
       hotel: {},
       room_types: [],
       rates: [],
@@ -83,6 +83,10 @@ class AvailCalendar extends React.Component {
       this.setState({ loading: false })
       console.log(error)
     }
+  }
+
+  matchRoomTypeRatePlans = ( room_types, rate_plans ) => {
+  	return room_types.map( room_type => ({...room_type, expanded: true, rate_plans: room_type.hotel_rate_plan_ids.map( rate_plan_id => rate_plans.find(rate_plan => rate_plan_id === rate_plan.id)).filter(item => item) }) )
   }
 
   getAvailability = () => {
@@ -154,10 +158,6 @@ class AvailCalendar extends React.Component {
   		return rate_by_room_type
   	})
   	this.setState({rates: rates_by_room_type})  	
-  }
-
-  matchRoomTypeRatePlans = ( room_types, rate_plans ) => {
-  	return room_types.map( room_type => ({...room_type, expanded: false, rate_plans: room_type.hotel_rate_plan_ids.map( rate_plan_id => rate_plans.find(rate_plan => rate_plan_id === rate_plan.id)).filter(item => item) }) )
   }
 
   toggleRoomType = ( room_type_change_index ) => {
