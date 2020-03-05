@@ -23,7 +23,7 @@ const week = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 
 const SCROLL_STEP = 12
 const SCROLL_INTERVAL = 10
-const DAY_NUMBER = 30
+const DAY_NUMBER = 600
 
 // Colors
 const MANUAL_EDIT_COLOR = '#ffdfd0'

@@ -1,7 +1,7 @@
 import React from 'react'
 import { withNamespaces } from 'react-i18next'
 import CalendarRow from './CalendarRow'
-import CalendarHeaderRow from './CalendarHeaderRow'
+import HeaderRow from './HeaderRow'
 import CalendarGenericRow from './CalendarGenericRow'
 
 
@@ -38,10 +38,10 @@ class CalendarBody extends React.PureComponent {
 
         <div style={{
           display: 'grid',
-          'grid-template-rows': `50px 30px repeat(${this.props.roomTypes.length}, 25px)`,
-          'grid-template-columns': `repeat(${this.props.headers.length}, ${COLUMN_WIDTH}px)`,
+          gridTemplateRows: `50px 30px repeat(${this.props.roomTypes.length}, 25px)`,
+          gridTemplateColumns: `repeat(${this.props.headers.length}, ${COLUMN_WIDTH}px)`,
         }}>
-          <CalendarHeaderRow
+          <HeaderRow
             rowData={this.getVisibleCells(this.props.headers)}
             skipped={this.state.skip_cols}
           />

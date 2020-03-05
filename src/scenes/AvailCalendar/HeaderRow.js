@@ -4,7 +4,7 @@ import { withNamespaces } from 'react-i18next'
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-class CalendarHeaderRow extends React.PureComponent {
+class HeaderRow extends React.PureComponent {
   render() {
     const date = new Date()
     return (
@@ -30,4 +30,4 @@ class CalendarHeaderRow extends React.PureComponent {
   }
 }
 
-export default withNamespaces('translation')(CalendarHeaderRow)
+export default withNamespaces('translation')(HeaderRow)

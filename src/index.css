@@ -315,3 +315,24 @@ html{
     box-sizing: border-box;
     text-align: right;    
 }
+
+/**************************************************************************/
+.dropdown-container {
+  position: relative;
+}
+
+.clickable-dropdown-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  position: absolute;
+  display: none;
+  z-index: 2;
+}
+
+.dropdown-container:hover .dropdown-content,
+.clickable-dropdown-container.active .dropdown-content {
+  display: block;
+}
