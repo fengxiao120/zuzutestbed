@@ -8,7 +8,7 @@ const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct
 
 const ROOM_TYPE_DAFAULT_OFFSET = 32
 
-class LeftPanel extends React.Component {
+class LeftPanel extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {

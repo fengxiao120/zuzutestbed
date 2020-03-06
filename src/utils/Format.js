@@ -15,8 +15,8 @@ const formatTime = (dateObject) => {
 		return ''
 }
 
-const calcDayDiff = ( end_date, start_date ) => {
-  return ( new Date(end_date.getFullYear(), end_date.getMonth(), end_date.getDate()) - 
+const calcDayDiff = ( end_date, start_date, inclusive ) => {
+  return (inclusive?1:0) + ( new Date(end_date.getFullYear(), end_date.getMonth(), end_date.getDate()) - 
     new Date(start_date.getFullYear(), start_date.getMonth(), start_date.getDate()) ) / 86400000 //this is the count of miniseconds in a day    
 }
 

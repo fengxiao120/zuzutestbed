@@ -1,14 +1,9 @@
 import React from 'react'
 import { withNamespaces } from 'react-i18next'
-import CalendarRow from './CalendarRow'
-import HeaderRow from './HeaderRow'
-import CalendarGenericRow from './CalendarGenericRow'
+import Column from './Column'
 
-
+const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 const COLUMN_WIDTH = 80
-const cellsOnScreen = 20
-
-const RATE_PLAN_DATA = Array(720).fill(0).map( (item, index) => ({price: index}) ) // debug
 
 class CalendarBody extends React.PureComponent {
   constructor(props) {
@@ -18,56 +13,41 @@ class CalendarBody extends React.PureComponent {
     }
   }
 
+  last_scroll_left = 0 
+
   onScroll = () => {
     console.log('scrolling')
-    const scroll_left = document.getElementById('calendar-body').scrollLeft
-    this.setState({skip_cols: Math.max( Math.floor( scroll_left / COLUMN_WIDTH ) - 2, 0  ) })
-  }
+    const scroll_left = document.getElementById('calendar-body-container').scrollLeft
+    if(scroll_left > this.last_scroll_left){ //means it is scrolling right
+      const body_width = this.props.headers.length*COLUMN_WIDTH
+      const remaining_width = body_width - scroll_left - document.getElementById('calendar-body-container').clientWidth
+      this.props.onScroll(remaining_width/COLUMN_WIDTH)
+    }
 
-  getVisibleCells = (cells) => {
-    const newCells = [].concat(cells)
-    newCells.splice(0, this.state.skip_cols)
+    const Col_in_action = this.props.headers[Math.ceil(scroll_left/COLUMN_WIDTH)]
+    this.props.onMonthInDisplayChange(month[Col_in_action.date.getMonth()] + ' ' + Col_in_action.date.getFullYear())
 
-    return newCells.slice(0, cellsOnScreen )
+    this.last_scroll_left = scroll_left
+    this.setState({skip_cols: Math.max( Math.floor( scroll_left / COLUMN_WIDTH ) - 5, 0  ) })    
   }
 
   render() {
     console.log('CalendarBody is rendering')
     return (
-      <div className="calendar-body" id='calendar-body' onScroll={this.onScroll}>
+      <div className="calendar-body-container" id='calendar-body-container' onScroll={this.onScroll}>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateRows: `50px 30px repeat(${this.props.roomTypes.length}, 25px)`,
-          gridTemplateColumns: `repeat(${this.props.headers.length}, ${COLUMN_WIDTH}px)`,
-        }}>
-          <HeaderRow
-            rowData={this.getVisibleCells(this.props.headers)}
-            skipped={this.state.skip_cols}
-          />
-          <CalendarGenericRow
-            rowClass='availability'
-            rowData={this.getVisibleCells(this.props.availabilitySum)}
-            skipped={this.state.skip_cols}
-          />
-          { this.props.roomTypes.map( (roomType, index) => {
-            const availability = this.props.availability.find( avail => roomType.room_type_id === avail.room_type_id)
-            const rate = this.props.rates.find( rate => roomType.room_type_id === rate.room_type_id)
-            if( !availability || !rate)
-              return null
-            else
-              return (<CalendarRow 
-              key={index} 
-              expanded={this.props.roomTypes[index].expanded}
-              availability={this.getVisibleCells( availability.avails )}
-              rates={ rate.grouped_rate_by_rate_plan.map( rate_plan => ({
-               rate_plan_id: rate_plan.rate_plan_id,
-               rates_by_rate_plan: this.getVisibleCells( rate_plan.rates_by_rate_plan )
-              }) ) }
-              ratePlans={roomType.rate_plans}
+        <div id="calendar-body" style={{display: 'flex'}}>
+          { this.props.headers.map( (day, day_index) => 
+            <Column
+              date={day.date}
+              index={day_index}
+              isLastColumn={day_index === this.props.headers.length - 1}
               skipped={this.state.skip_cols}
-              />)
-          })}
+              roomTypes={this.props.roomTypes}
+              availability={this.props.availability[day_index]}
+              rates={this.props.rates[day_index]}
+            />
+          )}
         </div>
 
 
