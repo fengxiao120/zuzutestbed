@@ -24,12 +24,12 @@ class Column extends React.PureComponent {
         return (<div style={{minWidth: COLUMN_WIDTH*(this.props.index - this.props.skipped - cellsOnScreen )}}>&nbsp;</div>)
       else
         return null      
-    } else
+    } else{
       return (
         <div className='column'>
-          { this.props.availability && this.props.rates && <React.Fragment>
-            <div className='col-day'>{days[this.props.date.getDay()]}</div>
-            <div className='col-date bold'>{this.props.date.getDate()}</div>
+          <div className='col-day'>{days[this.props.date.getDay()]}</div>
+          <div className='col-date bold'>{this.props.date.getDate()}</div>
+          { !!this.props.availability && !!this.props.rates && <React.Fragment>
             <div className='bold avail-sum'>&nbsp;</div>
             {
               this.props.roomTypes.map( room_type => {
@@ -51,10 +51,11 @@ class Column extends React.PureComponent {
                 </React.Fragment>)
               })
             }
-          </React.Fragment>
-          }
+          </React.Fragment>}
+        
         </div>
       )
+    }
   }
 }
 

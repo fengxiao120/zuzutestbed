@@ -16,7 +16,8 @@ import AvailabilityCalendarApi from '../../api/AvailabilityCalendarApi'
 import {
   formatRequestDate,
   addDays,
-  calcDayDiff
+  calcDayDiff,
+  calcMonthDiff
 } from '../../utils/Format'
 
 const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -25,6 +26,7 @@ const TODAY = new Date()
 
 const SCROLL_STEP = 12
 const SCROLL_INTERVAL = 12
+const COLUMN_WIDTH = 80
 
 // Colors
 const MANUAL_EDIT_COLOR = '#ffdfd0'
@@ -54,6 +56,7 @@ class AvailCalendar extends React.PureComponent {
     super(props)
     this.state = {
       loading: false,
+      jump_date: '',
       hotel: {},
       room_types: [],
       rates: [],
@@ -68,9 +71,6 @@ class AvailCalendar extends React.PureComponent {
 
   rate_month_data_fetch = Array(24).fill(false) // array to keep track of which month rates has been fetched; 24 months in total
   avail_month_data_fetch = Array(24).fill(false) // array to keep track of which month availability has been fetched; 24 months in total
-  next_fetch_rate_month = 0
-  next_fetch_avail_month = 0
-  day_number = 0
 
   getRates_loading = false
   getAvailability_loading = false
@@ -83,9 +83,8 @@ class AvailCalendar extends React.PureComponent {
 
     const to_date = addMonthDayLastDay(TODAY, 1)
     this.calendar_end_date = to_date
-    this.getRates(TODAY, to_date)
-    this.getAvailability(TODAY, to_date)
-  	this.next_fetch_rate_month = 1
+    this.getRates(TODAY, to_date, [0, 1])
+    this.getAvailability(TODAY, to_date, [0, 1])
   }
 
   componoentWillUnmount = () => {
@@ -97,16 +96,74 @@ class AvailCalendar extends React.PureComponent {
       this.setState({ filter_by_channel_dropdown: false })
   }
 
-  onScroll = ( right_remaining_cols ) => {
-  	if( right_remaining_cols < 15 && !this.getRates_loading && !this.getAvailability_loading){
-  		this.next_fetch_rate_month += 1
-	    const from_date = addMonthDay1(TODAY, this.next_fetch_rate_month)
-	    const to_date = addMonthDayLastDay(TODAY, this.next_fetch_rate_month)
+  onScroll = ( right_remaining_cols, month_to_display_offset ) => {
+  	if( right_remaining_cols < 15 && !this.getRates_loading && !this.getAvailability_loading &&!this.rate_month_data_fetch[month_to_display_offset]){
+	    const from_date = addMonthDay1(TODAY, month_to_display_offset)
+	    const to_date = addMonthDayLastDay(TODAY, month_to_display_offset)
 	    this.calendar_end_date = to_date
-	    this.getRates(from_date, to_date)
-	    this.getAvailability(from_date, to_date)
+	    this.getRates(from_date, to_date, [month_to_display_offset])
+	    this.getAvailability(from_date, to_date, [month_to_display_offset])
   	}
+  }
 
+  jumpDate = () => {
+  	const dest_date = new Date(this.state.jump_date)
+  	const month_diff = calcMonthDiff(dest_date, TODAY)
+  	const day_diff = calcDayDiff(dest_date, TODAY)
+  	if( dest_date < TODAY || dest_date > addDays(TODAY, 720) || this.rate_month_data_fetch[month_diff] === undefined )
+  		return
+  	else if(month_diff < 2)
+    	document.getElementById('calendar-body-container').scrollLeft = day_diff*COLUMN_WIDTH
+  	else if( this.rate_month_data_fetch[month_diff - 1] && this.rate_month_data_fetch[month_diff] && this.rate_month_data_fetch[month_diff + 1])
+    	document.getElementById('calendar-body-container').scrollLeft = day_diff*COLUMN_WIDTH
+    else if(this.rate_month_data_fetch[month_diff - 1] && !this.rate_month_data_fetch[month_diff] && !this.rate_month_data_fetch[month_diff + 1]){
+   		this.setState({ loading: true })
+    	const from_date = addMonthDay1(TODAY, month_diff)
+	    const to_date = addMonthDayLastDay(TODAY, month_diff + 1)
+	    this.calendar_end_date = this.calendar_end_date < to_date? to_date:this.calendar_end_date
+	    this.getRates(from_date, to_date, [month_diff, month_diff + 1], day_diff)
+	    this.getAvailability(from_date, to_date, [month_diff, month_diff + 1])
+
+    } else if(this.rate_month_data_fetch[month_diff - 1] && this.rate_month_data_fetch[month_diff] && !this.rate_month_data_fetch[month_diff + 1]){
+   		this.setState({ loading: true })
+    	const from_date = addMonthDay1(TODAY, month_diff + 1)
+	    const to_date = addMonthDayLastDay(TODAY, month_diff + 1)
+	    this.calendar_end_date = this.calendar_end_date < to_date? to_date:this.calendar_end_date
+	    this.getRates(from_date, to_date, [month_diff + 1], day_diff)
+	    this.getAvailability(from_date, to_date, [month_diff + 1])
+
+    } else if(this.rate_month_data_fetch[month_diff - 1] && !this.rate_month_data_fetch[month_diff] && this.rate_month_data_fetch[month_diff + 1]){
+   		this.setState({ loading: true })
+    	const from_date = addMonthDay1(TODAY, month_diff)
+	    const to_date = addMonthDayLastDay(TODAY, month_diff)
+	    this.calendar_end_date = this.calendar_end_date < to_date? to_date:this.calendar_end_date
+	    this.getRates(from_date, to_date, [month_diff], day_diff)
+	    this.getAvailability(from_date, to_date, [month_diff])
+
+    } else if(!this.rate_month_data_fetch[month_diff - 1] && !this.rate_month_data_fetch[month_diff] && this.rate_month_data_fetch[month_diff + 1]){
+   		this.setState({ loading: true })
+    	const from_date = addMonthDay1(TODAY, month_diff - 1)
+	    const to_date = addMonthDayLastDay(TODAY, month_diff)
+	    this.calendar_end_date = this.calendar_end_date < to_date? to_date:this.calendar_end_date
+	    this.getRates(from_date, to_date, [month_diff - 1, month_diff], day_diff)
+	    this.getAvailability(from_date, to_date, [month_diff - 1, month_diff])  
+
+    } else if(!this.rate_month_data_fetch[month_diff - 1] && this.rate_month_data_fetch[month_diff] && this.rate_month_data_fetch[month_diff + 1]){
+   		this.setState({ loading: true })
+    	const from_date = addMonthDay1(TODAY, month_diff - 1)
+	    const to_date = addMonthDayLastDay(TODAY, month_diff - 1)
+	    this.calendar_end_date = this.calendar_end_date < to_date? to_date:this.calendar_end_date
+	    this.getRates(from_date, to_date, [month_diff - 1], day_diff)
+	    this.getAvailability(from_date, to_date, [month_diff - 1])  
+
+  	} else if(!this.rate_month_data_fetch[month_diff - 1] && !this.rate_month_data_fetch[month_diff] && !this.rate_month_data_fetch[month_diff + 1]){
+   		this.setState({ loading: true })
+    	const from_date = addMonthDay1(TODAY, month_diff - 1)
+	    const to_date = addMonthDayLastDay(TODAY, month_diff + 1)
+	    this.calendar_end_date = this.calendar_end_date < to_date? to_date:this.calendar_end_date
+	    this.getRates(from_date, to_date, [month_diff - 1, month_diff, month_diff + 1], day_diff)
+	    this.getAvailability(from_date, to_date, [month_diff - 1, month_diff, month_diff + 1])
+  	}
   }
 
   getRoomTypes = async () => {
@@ -133,13 +190,14 @@ class AvailCalendar extends React.PureComponent {
   	return room_types.map( room_type => ({...room_type, expanded: true, rate_plans: room_type.hotel_rate_plan_ids.map( rate_plan_id => rate_plans.find(rate_plan => rate_plan_id === rate_plan.id)).filter(item => item) }) )
   }
 
-  getRates = (from_date, to_date) => {
+  getRates = (from_date, to_date, months_to_fetch_array, day_diff ) => { // is day_diff is not null, means a jump
     this.getRates_loading = true
     AvailabilityCalendarApi.getRates(this.hotel_id, {from_date: formatRequestDate(from_date), to_date: formatRequestDate(to_date) })
     .then(response => {
     	this.setState({loading:false})
     	this.getRates_loading = false
-    	this.sortRates( response.room_rate_prices )
+    	months_to_fetch_array.forEach( month_index => this.rate_month_data_fetch[month_index] = true  )
+    	this.sortRates( response.room_rate_prices, months_to_fetch_array, day_diff )
     })
     .catch( error  => {
     	this.setState({loading:false})
@@ -147,7 +205,7 @@ class AvailCalendar extends React.PureComponent {
     })
   }
 
-  sortRates = ( response_rates ) =>{
+  sortRates = ( response_rates, months_fetched_array, day_diff) =>{
   	let new_rates_obj = {}
 	response_rates.forEach( rate => {
 	    if(new_rates_obj[rate.date])
@@ -157,12 +215,24 @@ class AvailCalendar extends React.PureComponent {
 	})
 
   	let new_rates = Object.values(new_rates_obj)
-  	console.log('new rates')
-  	console.log(new_rates)
-  	this.setState({rates: this.state.rates.length? this.state.rates.concat(new_rates): new_rates})
+
+  	const start_offset = calcDayDiff( addMonthDay1(TODAY, months_fetched_array[0]), TODAY ) 
+  	const end_offset = calcDayDiff( addMonthDayLastDay(TODAY, months_fetched_array[months_fetched_array.length - 1]), TODAY ) 
+
+  	let stitched_new_rates = []
+  	if(this.state.rates.length){
+  		if(start_offset > this.state.rates.length)
+  			stitched_new_rates = this.state.rates.concat(Array(start_offset - this.state.rates.length).fill(0)).concat(new_rates)
+  		else
+  			stitched_new_rates = this.state.rates.slice(0, start_offset).concat(new_rates).concat(this.state.rates.slice(end_offset+1, this.state.rates.length))
+  	} else
+  		stitched_new_rates = new_rates
+
+	console.log('stitched_new_rates', stitched_new_rates)
+  	this.setState({rates: stitched_new_rates }, day_diff?()=> document.getElementById('calendar-body-container').scrollLeft = day_diff*COLUMN_WIDTH:null)
   }
 
-  getAvailability = (from_date, to_date) => {
+  getAvailability = (from_date, to_date, months_to_fetch_array) => {
     this.getAvailability_loading = true
 
     AvailabilityCalendarApi.getAvailability(this.hotel_id, {
@@ -172,7 +242,7 @@ class AvailCalendar extends React.PureComponent {
       .then((response) => {
         this.setState({ loading: false })
     	this.getAvailability_loading = false
-        this.sortAvailability(response)
+        this.sortAvailability(response, months_to_fetch_array)
       })
       .catch((error) => {
         this.setState({ loading: false })
@@ -180,7 +250,7 @@ class AvailCalendar extends React.PureComponent {
       })
   }
 
-  sortAvailability = (response) => {
+  sortAvailability = (response, months_fetched_array) => {
   	let new_avail_obj = {}
 	response.availabilities.forEach( avail => {
 	    if(new_avail_obj[avail.date])
@@ -191,9 +261,21 @@ class AvailCalendar extends React.PureComponent {
 
   	const new_avails = Object.values(new_avail_obj)
 
-  	console.log('new avails')
-  	console.log(new_avails)
   	this.setState({availability: this.state.availability.length? this.state.availability.concat(new_avails): new_avails})
+
+	const start_offset = calcDayDiff( addMonthDay1(TODAY, months_fetched_array[0]), TODAY ) 
+  	const end_offset = calcDayDiff( addMonthDayLastDay(TODAY, months_fetched_array[months_fetched_array.length - 1]), TODAY ) 
+
+  	let stitched_new_avails = []
+  	if(this.state.availability.length){
+  		if(start_offset > this.state.availability.length)
+  			stitched_new_avails = this.state.availability.concat(Array(start_offset - this.state.availability.length).fill(0)).concat(new_avails)
+  		else
+  			stitched_new_avails = this.state.availability.slice(0, start_offset).concat(new_avails).concat(this.state.availability.slice(end_offset+1, this.state.availability.length))
+  	} else
+  		stitched_new_avails = new_avails
+
+  	this.setState({availability: stitched_new_avails })  	
   }
 
   toggleRoomType = ( room_type_change_index ) => {
@@ -236,7 +318,7 @@ class AvailCalendar extends React.PureComponent {
   render() {
     const { t } = this.props
 
-    console.log('index is rendering')
+    console.log('index is rendering', this.rate_month_data_fetch)
 
     return (
     <div style={{display:'flex'}}>
@@ -265,6 +347,9 @@ class AvailCalendar extends React.PureComponent {
 	        		onMouseOutLeft={this.onMouseOutLeft}
 	        		scrollRight={this.scrollRight}
 	        		onMouseOutRight={this.onMouseOutRight}
+	        		jumpDate={this.jumpDate}
+	        		dateToJump={this.state.jump_date}
+	        		onJumpDateChange={(e)=>this.setState({jump_date: e.target.value})}
 	        		roomTypes={this.state.room_types}
 	        		toggleRoomType={this.toggleRoomType}
 	        		updateDerived={this.state.update_derived}

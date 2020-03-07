@@ -64,6 +64,13 @@ class LeftPanel extends React.PureComponent {
                 {t('Update derived')}
               </div>         
             </div>
+
+
+            <div className='flex'>
+              <input class='jump-date' value={this.props.dateToJump} onChange={this.props.onJumpDateChange} />
+              <button class='jump-button' onClick={this.props.jumpDate}>Jump</button>
+            </div>
+
             <div
               onMouseOver={() => this.props.scrollLeft()}
               onMouseOut={() => this.props.onMouseOutLeft()}

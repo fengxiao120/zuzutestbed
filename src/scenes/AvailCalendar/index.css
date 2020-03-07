@@ -50,10 +50,6 @@
 	display: inline-block;
 }
 
-.left.scroller-icon{
-	margin-left: 170px;
-}
-
 .left-panel{
 	width: 320px;
 }
@@ -64,6 +60,7 @@
 	display: flex;
 	background: #f9f9f9;
     align-items: center;
+    justify-content: space-between;
 }
 
 .right-column{
@@ -223,6 +220,10 @@
 .month-year-in-display{
 	padding-left: 330px;
 	background: #f9f9f9;
+}
+
+.jump-date{
+	width: 70px;
 }
 /****************************************************************************************************************/
 .bold{

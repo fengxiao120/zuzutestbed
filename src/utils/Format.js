@@ -20,6 +20,14 @@ const calcDayDiff = ( end_date, start_date, inclusive ) => {
     new Date(start_date.getFullYear(), start_date.getMonth(), start_date.getDate()) ) / 86400000 //this is the count of miniseconds in a day    
 }
 
+const calcMonthDiff = (end_date_arg, start_date_arg) => {
+  const start_date = new Date(start_date_arg)
+  const end_date = new Date(end_date_arg)
+  end_date.setDate(1)
+  start_date.setDate(1)
+  return end_date.getYear()*12 + end_date.getMonth() - (start_date.getYear()*12 + start_date.getMonth())
+}
+
 const formatCurrency = (amount, currency_code, currency_symbol, force_return_original) => {
 	if(isNaN(amount)){
 		if(force_return_original)
@@ -68,4 +76,4 @@ const addDays = (date, days) => {
   return result
 }
 
-export { formatDate, calcDayDiff, formatTime, formatCurrency, formatRequestDate, formatDBTime, addDays }
+export { formatDate, calcDayDiff, formatTime, formatCurrency, formatRequestDate, formatDBTime, addDays, calcMonthDiff }

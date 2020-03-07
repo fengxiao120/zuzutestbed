@@ -1,6 +1,12 @@
 import React from 'react'
 import { withNamespaces } from 'react-i18next'
 import Column from './Column'
+import {
+  formatRequestDate,
+  addDays,
+  calcDayDiff,
+  calcMonthDiff
+} from '../../utils/Format'
 
 const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 const COLUMN_WIDTH = 80
@@ -16,15 +22,17 @@ class CalendarBody extends React.PureComponent {
   last_scroll_left = 0 
 
   onScroll = () => {
-    console.log('scrolling')
     const scroll_left = document.getElementById('calendar-body-container').scrollLeft
+    const Col_in_action = this.props.headers[Math.ceil(scroll_left/COLUMN_WIDTH)]
+
     if(scroll_left > this.last_scroll_left){ //means it is scrolling right
       const body_width = this.props.headers.length*COLUMN_WIDTH
       const remaining_width = body_width - scroll_left - document.getElementById('calendar-body-container').clientWidth
-      this.props.onScroll(remaining_width/COLUMN_WIDTH)
+
+      const month_to_display_offset = calcMonthDiff(Col_in_action.date, this.props.headers[0].date) + 1
+      this.props.onScroll(remaining_width/COLUMN_WIDTH, month_to_display_offset)
     }
 
-    const Col_in_action = this.props.headers[Math.ceil(scroll_left/COLUMN_WIDTH)]
     this.props.onMonthInDisplayChange(month[Col_in_action.date.getMonth()] + ' ' + Col_in_action.date.getFullYear())
 
     this.last_scroll_left = scroll_left
@@ -32,7 +40,6 @@ class CalendarBody extends React.PureComponent {
   }
 
   render() {
-    console.log('CalendarBody is rendering')
     return (
       <div className="calendar-body-container" id='calendar-body-container' onScroll={this.onScroll}>
 
