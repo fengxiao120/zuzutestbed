@@ -66,7 +66,7 @@ class CalendarBody extends React.PureComponent {
   }
 
   render() {
-    console.log('CalendarBody rendering')
+    // console.log('CalendarBody rendering')
     return (
       <div className="calendar-body-container" id='calendar-body-container' onScroll={this.onScroll}>
         <div id="calendar-body" style={{display: 'flex'}}>

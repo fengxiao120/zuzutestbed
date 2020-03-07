@@ -228,7 +228,6 @@ class AvailCalendar extends React.PureComponent {
   	} else
   		stitched_new_rates = new_rates
 
-	console.log('stitched_new_rates', stitched_new_rates)
   	this.setState({rates: stitched_new_rates }, day_diff?()=> document.getElementById('calendar-body-container').scrollLeft = day_diff*COLUMN_WIDTH:null)
   }
 
@@ -317,8 +316,6 @@ class AvailCalendar extends React.PureComponent {
 
   render() {
     const { t } = this.props
-
-    console.log('index is rendering', this.rate_month_data_fetch)
 
     return (
     <div style={{display:'flex'}}>
