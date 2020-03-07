@@ -10,6 +10,7 @@ import {
 
 const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 const COLUMN_WIDTH = 80
+const cellsOnScreen = 20
 
 //helper functions
 const addMonthDay1 = (date, months) => {
@@ -69,8 +70,19 @@ class CalendarBody extends React.PureComponent {
     return (
       <div className="calendar-body-container" id='calendar-body-container' onScroll={this.onScroll}>
         <div id="calendar-body" style={{display: 'flex'}}>
-          { this.props.headers.map( (day, day_index) => 
-            <Column
+          { this.props.headers.map( (day, day_index) => {
+            if(this.state.skip_cols>day_index){
+              if(!day_index)
+                return (<div style={{minWidth: COLUMN_WIDTH*this.state.skip_cols}}>&nbsp;</div>)
+              else
+                return null
+            } else if (this.state.skip_cols + cellsOnScreen<day_index ){
+              if(day_index === this.props.headers.length - 1)
+                return (<div style={{minWidth: COLUMN_WIDTH*(day_index - this.state.skip_cols - cellsOnScreen )}}>&nbsp;</div>)
+              else
+                return null      
+            } else
+              return(<Column
               date={day.date}
               index={day_index}
               isLastColumn={day_index === this.props.headers.length - 1}
@@ -78,8 +90,8 @@ class CalendarBody extends React.PureComponent {
               roomTypes={this.props.roomTypes}
               availability={this.props.availability[day_index]}
               rates={this.props.rates[day_index]}
-            />
-          )}
+            />)
+          })}
         </div>
       </div>
     )
