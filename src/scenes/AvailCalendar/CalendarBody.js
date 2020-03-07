@@ -10,7 +10,7 @@ import {
 
 const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 const COLUMN_WIDTH = 80
-const cellsOnScreen = 20
+const cellsOnScreen = 30
 
 //helper functions
 const addMonthDay1 = (date, months) => {
