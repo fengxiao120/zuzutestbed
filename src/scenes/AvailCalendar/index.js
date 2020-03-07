@@ -96,13 +96,13 @@ class AvailCalendar extends React.PureComponent {
       this.setState({ filter_by_channel_dropdown: false })
   }
 
-  onScroll = ( right_remaining_cols, month_to_display_offset ) => {
-  	if( right_remaining_cols < 15 && !this.getRates_loading && !this.getAvailability_loading &&!this.rate_month_data_fetch[month_to_display_offset]){
-	    const from_date = addMonthDay1(TODAY, month_to_display_offset)
-	    const to_date = addMonthDayLastDay(TODAY, month_to_display_offset)
-	    this.calendar_end_date = to_date
-	    this.getRates(from_date, to_date, [month_to_display_offset])
-	    this.getAvailability(from_date, to_date, [month_to_display_offset])
+  onScroll = ( month_to_fetch ) => {
+  	if( !this.getRates_loading && !this.getAvailability_loading &&!this.rate_month_data_fetch[month_to_fetch] ){
+    	const from_date = addMonthDay1(TODAY, month_to_fetch)
+    	const to_date = addMonthDayLastDay(TODAY, month_to_fetch)
+    	this.calendar_end_date = this.calendar_end_date < to_date? to_date:this.calendar_end_date
+	    this.getRates(from_date, to_date, [month_to_fetch])
+	    this.getAvailability(from_date, to_date, [month_to_fetch])  		
   	}
   }
 

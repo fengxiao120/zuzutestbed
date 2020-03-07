@@ -11,6 +11,21 @@ import {
 const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 const COLUMN_WIDTH = 80
 
+//helper functions
+const addMonthDay1 = (date, months) => {
+  const result = new Date(date)
+  result.setMonth(result.getMonth() + months)
+  result.setDate(1)
+  return result
+}
+
+const addMonthDayLastDay = (date, months) => {
+  const result = new Date(date)
+  result.setMonth(result.getMonth() + months + 1)
+  result.setDate(0)
+  return result
+}
+
 class CalendarBody extends React.PureComponent {
   constructor(props) {
     super(props)
@@ -25,12 +40,22 @@ class CalendarBody extends React.PureComponent {
     const scroll_left = document.getElementById('calendar-body-container').scrollLeft
     const Col_in_action = this.props.headers[Math.ceil(scroll_left/COLUMN_WIDTH)]
 
-    if(scroll_left > this.last_scroll_left){ //means it is scrolling right
-      const body_width = this.props.headers.length*COLUMN_WIDTH
-      const remaining_width = body_width - scroll_left - document.getElementById('calendar-body-container').clientWidth
-
-      const month_to_display_offset = calcMonthDiff(Col_in_action.date, this.props.headers[0].date) + 1
-      this.props.onScroll(remaining_width/COLUMN_WIDTH, month_to_display_offset)
+    if( scroll_left > this.last_scroll_left){ // means it is scrolling right
+      const last_day = addMonthDayLastDay(Col_in_action.date, 0)
+      const remaining_days = calcDayDiff(last_day, Col_in_action.date)
+      if(remaining_days < 25){
+        const month_to_fetch = calcMonthDiff(Col_in_action.date, this.props.headers[0].date) + 1
+        if(month_to_fetch < 24)
+          this.props.onScroll( month_to_fetch )
+      }
+    } else if( scroll_left < this.last_scroll_left ){ // means it is scrolling left
+      const first_day = addMonthDay1(Col_in_action.date, 0)
+      const remaining_days = calcDayDiff(Col_in_action.date, first_day)
+      if(remaining_days < 10){
+        const month_to_fetch = calcMonthDiff(Col_in_action.date, this.props.headers[0].date) - 1
+        if(month_to_fetch > 0)
+          this.props.onScroll( month_to_fetch )
+      }
     }
 
     this.props.onMonthInDisplayChange(month[Col_in_action.date.getMonth()] + ' ' + Col_in_action.date.getFullYear())
@@ -40,9 +65,9 @@ class CalendarBody extends React.PureComponent {
   }
 
   render() {
+    console.log('CalendarBody rendering')
     return (
       <div className="calendar-body-container" id='calendar-body-container' onScroll={this.onScroll}>
-
         <div id="calendar-body" style={{display: 'flex'}}>
           { this.props.headers.map( (day, day_index) => 
             <Column
@@ -56,8 +81,6 @@ class CalendarBody extends React.PureComponent {
             />
           )}
         </div>
-
-
       </div>
     )
   }
