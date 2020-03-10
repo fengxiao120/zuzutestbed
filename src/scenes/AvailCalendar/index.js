@@ -56,7 +56,7 @@ class AvailCalendar extends React.PureComponent {
     super(props)
     this.state = {
       loading: false,
-      jump_date: '',
+      jump_date: TODAY,
       hotel: {},
       room_types: [],
       rates: [],
@@ -106,7 +106,9 @@ class AvailCalendar extends React.PureComponent {
   	}
   }
 
-  jumpDate = () => {
+  jumpDate = async ( selected_day ) => {
+	await this.setState({jump_date: selected_day})
+
   	const dest_date = new Date(this.state.jump_date)
   	const month_diff = calcMonthDiff(dest_date, TODAY)
   	const day_diff = calcDayDiff(dest_date, TODAY)
@@ -228,7 +230,7 @@ class AvailCalendar extends React.PureComponent {
   	} else
   		stitched_new_rates = new_rates
 
-  	this.setState({rates: stitched_new_rates }, day_diff?()=> document.getElementById('calendar-body-container').scrollLeft = day_diff*COLUMN_WIDTH:null)
+  	this.setState({rates: stitched_new_rates, loading: false }, day_diff?()=> document.getElementById('calendar-body-container').scrollLeft = day_diff*COLUMN_WIDTH:null)
   }
 
   getAvailability = (from_date, to_date, months_to_fetch_array) => {
@@ -250,31 +252,28 @@ class AvailCalendar extends React.PureComponent {
   }
 
   sortAvailability = (response, months_fetched_array) => {
-  	let new_avail_obj = {}
-	response.availabilities.forEach( avail => {
-	    if(new_avail_obj[avail.date])
-	        new_avail_obj[avail.date].push(avail)
-	    else
-	        new_avail_obj[avail.date] = [avail]
-	})
+    let new_avail_obj = {}
+    response.availabilities.forEach( avail => {
+        if(new_avail_obj[avail.date])
+            new_avail_obj[avail.date].push(avail)
+        else
+            new_avail_obj[avail.date] = [avail]
+    })
 
-  	const new_avails = Object.values(new_avail_obj)
+    const new_avails = Object.values(new_avail_obj) 
 
-  	this.setState({availability: this.state.availability.length? this.state.availability.concat(new_avails): new_avails})
+    let stitched_new_avails = []
+    if(this.state.availability.length){
+      const start_offset = calcDayDiff( addMonthDay1(TODAY, months_fetched_array[0]), TODAY ) 
+      const end_offset = calcDayDiff( addMonthDayLastDay(TODAY, months_fetched_array[months_fetched_array.length - 1]), TODAY )      
+      if(start_offset > this.state.availability.length)
+        stitched_new_avails = this.state.availability.concat(Array(start_offset - this.state.availability.length).fill(0)).concat(new_avails)
+      else
+        stitched_new_avails = this.state.availability.slice(0, start_offset).concat(new_avails).concat(this.state.availability.slice(end_offset+1, this.state.availability.length))
+    } else
+      stitched_new_avails = new_avails
 
-	const start_offset = calcDayDiff( addMonthDay1(TODAY, months_fetched_array[0]), TODAY ) 
-  	const end_offset = calcDayDiff( addMonthDayLastDay(TODAY, months_fetched_array[months_fetched_array.length - 1]), TODAY ) 
-
-  	let stitched_new_avails = []
-  	if(this.state.availability.length){
-  		if(start_offset > this.state.availability.length)
-  			stitched_new_avails = this.state.availability.concat(Array(start_offset - this.state.availability.length).fill(0)).concat(new_avails)
-  		else
-  			stitched_new_avails = this.state.availability.slice(0, start_offset).concat(new_avails).concat(this.state.availability.slice(end_offset+1, this.state.availability.length))
-  	} else
-  		stitched_new_avails = new_avails
-
-  	this.setState({availability: stitched_new_avails })  	
+    this.setState({availability: stitched_new_avails })   
   }
 
   toggleRoomType = ( room_type_change_index ) => {
@@ -346,7 +345,6 @@ class AvailCalendar extends React.PureComponent {
 	        		onMouseOutRight={this.onMouseOutRight}
 	        		jumpDate={this.jumpDate}
 	        		dateToJump={this.state.jump_date}
-	        		onJumpDateChange={(e)=>this.setState({jump_date: e.target.value})}
 	        		roomTypes={this.state.room_types}
 	        		toggleRoomType={this.toggleRoomType}
 	        		updateDerived={this.state.update_derived}

@@ -216,6 +216,8 @@
 .avail-sum{
 	border-right: 1px solid #e7ecf1;
 	line-height: 30px;
+	text-align: right;
+	padding-right: 10px;
 }
 
 .month-year-in-display{
@@ -223,8 +225,30 @@
 	background: #f9f9f9;
 }
 
+.date-selector{
+	background: white;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    padding: 10px;
+    width: 240px;
+    left: -50px;
+    top: 40px;
+    color: #333;
+}
+
 .jump-date{
-	width: 70px;
+	width: 94px;
+	color: #337ab7;
+	margin-left: 20px;
+}
+
+.fa-calendar{
+	margin-right: 4px;
+}
+
+.rate-stop-sell{
+	background: #ff6561;
+	color: white;	
 }
 /****************************************************************************************************************/
 .bold{

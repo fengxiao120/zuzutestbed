@@ -1,10 +1,15 @@
 import React from 'react'
 import { withNamespaces } from 'react-i18next'
 import classNames from 'classnames'
+import { addDays, formatDate } from '../../utils/Format'
+import { ZuZuDatePicker } from 'zuzuhs-react-components'
+
+import 'zuzuhs-react-components/dist/css/main.css'
 
 const SCROLL_STEP = 12
 const SCROLL_INTERVAL = 16
 const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const TODAY = new Date()
 
 const ROOM_TYPE_DAFAULT_OFFSET = 32
 
@@ -12,8 +17,26 @@ class LeftPanel extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      table_collapsed: true,
+      show_day_picker: false,
     }
+  }
+
+  componentDidMount = async () => {
+    window.addEventListener('click', this.collapseDropdown)
+  }
+
+  componoentWillUnmount = () => {
+    window.removeEventListener('click', this.collapseDropdown)
+  }
+
+  collapseDropdown = (event) => {
+    if (!event.target.matches('.jump-date, .jump-date *'))
+      this.setState({ show_day_picker: false })
+  }
+
+  jumpDate = ( selected_day ) => {
+    this.setState({show_day_picker: false})
+    this.props.jumpDate(selected_day)
   }
 
   toggleRoomType = (room_type_id) => {
@@ -65,11 +88,27 @@ class LeftPanel extends React.PureComponent {
               </div>         
             </div>
 
-
-            <div className='flex'>
-              <input class='jump-date' value={this.props.dateToJump} onChange={this.props.onJumpDateChange} />
-              <button class='jump-button' onClick={this.props.jumpDate}>Jump</button>
+            <div
+              className={`jump-date clickable-dropdown-container ${this.state.show_day_picker && 'active'}`}
+              onClick={() => this.setState({ show_day_picker: true })}
+            >
+              <i className='fa fa-calendar'/>
+              {formatDate(this.props.dateToJump, '')}
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="dropdown-content date-selector"
+              >
+                <ZuZuDatePicker
+                  onDateSelected={this.jumpDate}
+                  selectedDate={this.props.dateToJump}
+                  year={TODAY.getFullYear()}
+                  month={TODAY.getMonth() + 1}
+                  disableBefore={TODAY}
+                  disableAfter={addDays(TODAY, 720)}
+                />                
+              </div>
             </div>
+
 
             <div
               onMouseOver={() => this.props.scrollLeft()}
