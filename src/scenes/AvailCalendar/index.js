@@ -24,8 +24,8 @@ const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', '
 const week = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const TODAY = new Date()
 
-const SCROLL_STEP = 12
-const SCROLL_INTERVAL = 12
+const SCROLL_STEP = 8
+const SCROLL_INTERVAL = 20
 const COLUMN_WIDTH = 80
 
 // Colors
@@ -63,6 +63,8 @@ class AvailCalendar extends React.PureComponent {
       availability: [],
       update_derived: true,
       month_year_in_display: month[TODAY.getMonth()] + ' ' + TODAY.getFullYear(),
+
+      show_avail_breakdown: false,
     }
   }
 
@@ -189,7 +191,7 @@ class AvailCalendar extends React.PureComponent {
   }
 
   matchRoomTypeRatePlans = ( room_types, rate_plans ) => {
-  	return room_types.map( room_type => ({...room_type, expanded: true, rate_plans: room_type.hotel_rate_plan_ids.map( rate_plan_id => rate_plans.find(rate_plan => rate_plan_id === rate_plan.id)).filter(item => item) }) )
+  	return room_types.map( room_type => ({...room_type, expanded: false, avail_expanded: false, rate_plans: room_type.hotel_rate_plan_ids.map( rate_plan_id => rate_plans.find(rate_plan => rate_plan_id === rate_plan.id)).filter(item => item) }) )
   }
 
   getRates = (from_date, to_date, months_to_fetch_array, day_diff ) => { // is day_diff is not null, means a jump
@@ -287,6 +289,17 @@ class AvailCalendar extends React.PureComponent {
   	})
   }
 
+  toggleRoomTypeAvail = ( room_type_change_index ) => {
+  	this.setState({
+  		room_types: this.state.room_types.map( (room_type, room_type_index) => {
+  			if(room_type_change_index === room_type_index)
+  				return {...room_type, avail_expanded: !room_type.avail_expanded}
+  			else
+  				return room_type
+  		}) 
+  	})
+  }
+
   scrollLeft = () => {
     clearInterval(this.setLeftInterval)
     this.setLeftInterval = setInterval(() => this.scrollLeftDirtyWork(), SCROLL_INTERVAL)
@@ -347,8 +360,10 @@ class AvailCalendar extends React.PureComponent {
 	        		dateToJump={this.state.jump_date}
 	        		roomTypes={this.state.room_types}
 	        		toggleRoomType={this.toggleRoomType}
+	        		toggleRoomTypeAvail={this.toggleRoomTypeAvail}
 	        		updateDerived={this.state.update_derived}
-	        		onChangeUpdateDerived={() => this.setState({update_derived: !this.state.update_derived})}
+	        		showAvailBreakdown={this.state.show_avail_breakdown}
+	        		onStateToggle={( state_to_toggle ) => this.setState({[state_to_toggle]: !this.state[state_to_toggle]})}
 	        	/>
 	        	<CalendarBody
 	        		onScroll={this.onScroll}
@@ -357,6 +372,8 @@ class AvailCalendar extends React.PureComponent {
             		headers={Array( calcDayDiff(this.calendar_end_date, TODAY, true) ).fill(0).map((item, index) => ({ date: addDays(TODAY, index) }))}
 	        		availability={this.state.availability}
 	        		rates={this.state.rates}
+	        		showAvailBreakdown={this.state.show_avail_breakdown}
+
 	        	/>
 	        	<div className='right-column'>
 	        		<div className='spacer-1'>

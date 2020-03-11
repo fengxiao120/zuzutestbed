@@ -18,6 +18,7 @@ class LeftPanel extends React.PureComponent {
     super(props)
     this.state = {
       show_day_picker: false,
+      show_avail_breakdown: false, 
     }
   }
 
@@ -69,14 +70,7 @@ class LeftPanel extends React.PureComponent {
           <div className='spacer-1'>
             <div className='update-derived'>
               <div
-                tabIndex={0}
-                role="button"
-                onKeyDown={async (e) => {
-                  if (e.key === 'Enter') {
-                    this.props.onChangeUpdateDerived()
-                  }
-                }}
-                onClick={this.props.onChangeUpdateDerived}
+                onClick={()=>this.props.onStateToggle('update_derived')}
                 className={classNames('blue-select-box', {
                   'selected': this.props.updateDerived
                 })}
@@ -121,30 +115,54 @@ class LeftPanel extends React.PureComponent {
 
           <div className="all-room-avail">
             <span>{t('See all')}</span>
-            <span>{t('All room availability')}</span>
+            <span className='flex vertical-center'>
+              {t('All room availability')}
+              <img className='pointer' onClick={()=>this.props.onStateToggle('show_avail_breakdown')}
+                src={require(this.props.showAvailBreakdown?'./chart-color.svg':'./chart-light.svg')}/>
+            </span>
+          </div>
+
+          <div className={this.props.showAvailBreakdown?'break-down-container':'hidden'}>
+            <div className='right-align'>{t('Sold')}</div>
+            <div className='right-align'>{t('Closed')}</div>
+            <div className='right-align'>{t('Not available')}</div>
           </div>
 
           {this.props.roomTypes.map((room_type, index) => (
             <div key={index} className='room-type-with-rate-plans'>
-              <div className="row-name room-type">
-                <div className="room-type-name line-height-1">
-                    {room_type.name}
+              <div className='row-name-container'>
+                <div className="row-name room-type">
+                  <div className="room-type-name">
+                      {room_type.name}
+                  </div>
+                  <span className='flex vertical-center'>
+                    {t('Availability')}
+                    <img className='pointer' onClick={()=>this.props.toggleRoomTypeAvail(index)}
+                      src={require(room_type.avail_expanded?'./chart-color.svg':'./chart-light.svg')}/>
+                  </span>
                 </div>
-                <span className='line-height-1'>
-                  {t('Availability')}
-                </span>
+                <div className={room_type.avail_expanded?'room-type-break-down-container':'hidden'}>
+                  <div className='right-align'>{t('Sold')}</div>
+                  <div className='right-align'>{t('Closed')}</div>
+                  <div className='right-align'>{t('Not available')}</div>
+                </div>
               </div>
-              {room_type.rate_plans.map((rate_plan, rate_plan_index) => (
-                <div key={rate_plan_index} className={ !rate_plan_index || room_type.expanded ?'row-name':'hidden'}>
-                  <div className={rate_plan_index?'hidden':'expand-rate-plan'}
-                    onClick={()=>this.props.toggleRoomType(index)}>
-                    { room_type.expanded?'-':'+'}
-                  </div>
-                  <div className={rate_plan_index?'rate-plan left-padding':'rate-plan'}>
-                    {rate_plan.name}
-                  </div>
-                </div>
-              ))}
+              {room_type.rate_plans.map((rate_plan, rate_plan_index) => {
+                if(!rate_plan_index || room_type.expanded )
+                  return (
+                    <div key={rate_plan_index} className='row-name rate-plan'>
+                      <div className={rate_plan_index?'hidden':'expand-rate-plan'}
+                        onClick={()=>this.props.toggleRoomType(index)}>
+                        { room_type.expanded?'-':'+'}
+                      </div>
+                      <div className={rate_plan_index?'rate-plan-name left-padding':'rate-plan-name'}>
+                        {rate_plan.name}
+                      </div>
+                    </div>
+                  )
+                else
+                  return null
+              })}
             </div>
           ))}
         </div>

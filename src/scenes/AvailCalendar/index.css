@@ -40,7 +40,6 @@
     margin-left: 20px;
 }
 
-
 .scroller-icon{
 	width: 50px;
 	text-align: center;
@@ -71,7 +70,7 @@
 .all-room-avail{
 	display: flex;
 	justify-content: space-between;
-	padding: 0 10px 0 20px;
+	padding: 0 4px 0 20px;
 	height: 30px;
 	line-height: 30px;
 	border-right: 1px solid #e7ecf1;
@@ -85,16 +84,19 @@
 }
 
 .row-name{
-	padding: 0 10px;
+	padding-right: 10px;
 	display: flex;
 	line-height: 24px;
 	height: 25px;
 	box-sizing: border-box;
-	border-bottom: 1px solid #e7ecf1;
 }
 
 .row-name.room-type{
 	justify-content: space-between;
+}
+
+.row-name-container{
+	border-bottom: 1px solid #e7ecf1;
 }
 
 .room-type-name{
@@ -102,9 +104,10 @@
 }
 
 .rate-plan{
+	border-bottom: 1px solid #e7ecf1;
 }
 
-.rate-plan.left-padding{
+.rate-plan-name.left-padding{
 	padding-left: 20px;
 }
 
@@ -189,14 +192,16 @@
 	box-sizing: border-box;	
 }
 
-.avail-cell{
-	text-align: right;
-	font-weight: bold;
+.avail-cell-container{
 	border-top: 2px solid #337ab7;
-	border-bottom: 1px solid #e7ecf1;
 	border-right: 1px solid #e7ecf1;
-	height: 50px;
-	padding: 20px 10px 0;
+	border-bottom: 1px solid #e7ecf1;
+	padding: 23px 10px 0;
+	text-align: right;
+}
+
+.avail-cell{
+	font-weight: bold;
 	box-sizing: border-box;
 }
 
@@ -244,13 +249,48 @@
 
 .fa-calendar{
 	margin-right: 4px;
+	cursor: pointer;
 }
 
 .rate-stop-sell{
 	background: #ff6561;
 	color: white;	
 }
+
+.break-down-container{
+	padding-right: 25px;
+	color: #4d4d59; 
+	line-height: 20px;
+	border-right: 1px solid #e7ecf1;
+}
+
+.room-type-break-down-container{
+	padding-right: 25px;
+	line-height: 20px;
+}
+
+.avail-breakdown{
+	line-height: 20px;
+	text-align: right;
+}
+
+/*.rate-cell:last-child{
+	margin-bottom: 40px;
+}
+
+.rate-plan:last-child{
+	margin-bottom: 40px;
+}
+*/
 /****************************************************************************************************************/
+.pointer{
+	cursor: pointer;
+}
+
+.right-align{
+	text-align: right;
+}
+
 .bold{
 	font-weight: bold;
 }

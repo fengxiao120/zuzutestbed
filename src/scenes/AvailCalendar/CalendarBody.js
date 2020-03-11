@@ -90,6 +90,7 @@ class CalendarBody extends React.PureComponent {
               roomTypes={this.props.roomTypes}
               availability={this.props.availability[day_index]}
               rates={this.props.rates[day_index]}
+              showAvailBreakdown={this.props.showAvailBreakdown}
             />)
           })}
         </div>
