@@ -32,7 +32,8 @@
     "react-smooth-collapse": "^2.0.0",
     "react-table": "^6.8.6",
     "react-toasts": "^3.0.6",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "zuzuhs-react-components": "git+ssh://git@bitbucket.org/zuzuhs/zuzu.react.storybook.git#a386898"
   },
   "scripts": {
     "start": "react-scripts start",
