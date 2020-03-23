@@ -174,8 +174,6 @@ class AvailCalendar extends React.PureComponent {
     this.setState({ loading: true })
     try {
       const response = await AvailabilityCalendarApi.getRoomTypes(this.hotel_id, { language_id: 1 })
-      this.setState({ loading: false })
-
       const room_types = response.hotel_room_types
       const rate_plans = response.hotel_rate_plans
       const valid_room_types = room_types.filter(
@@ -191,14 +189,33 @@ class AvailCalendar extends React.PureComponent {
   }
 
   matchRoomTypeRatePlans = ( room_types, rate_plans ) => {
-  	return room_types.map( room_type => ({...room_type, expanded: false, avail_expanded: false, rate_plans: room_type.hotel_rate_plan_ids.map( rate_plan_id => rate_plans.find(rate_plan => rate_plan_id === rate_plan.id)).filter(item => item) }) )
+  	let temp_room_types = room_types.slice()
+  	room_types.forEach( (room_type, room_type_index) => room_type.child_room_type_ids.forEach( child_room_type_id => {
+  		const child_index = room_types.findIndex(rt => rt.room_type_id === child_room_type_id)
+  		if(child_index>=0){
+	  		if(temp_room_types[room_type_index].child_room_types)
+	  			temp_room_types[room_type_index].child_room_types.push({...room_types[child_index], is_child: true})
+	  		else
+	  			temp_room_types[room_type_index].child_room_types = [{...room_types[child_index], is_child: true}]
+	  		temp_room_types[child_index] = 0
+  		}
+  	}) )
+
+  	let ordered_room_types = []
+  	temp_room_types.filter(item => item).forEach( (room_type, room_type_index) => {
+  		ordered_room_types.push(room_type)
+  		if(room_type.child_room_types)
+  			room_type.child_room_types.forEach( child_room_type => ordered_room_types.push(child_room_type) )
+  	})  	
+
+  	return ordered_room_types.map( room_type => ({...room_type, expanded: false, avail_expanded: false, rate_plans: room_type.hotel_rate_plan_ids.map( rate_plan_id => rate_plans.find(rate_plan => rate_plan_id === rate_plan.id)).filter(item => item) }) )
   }
 
   getRates = (from_date, to_date, months_to_fetch_array, day_diff ) => { // is day_diff is not null, means a jump
     this.getRates_loading = true
     AvailabilityCalendarApi.getRates(this.hotel_id, {from_date: formatRequestDate(from_date), to_date: formatRequestDate(to_date) })
-    .then(response => {
-    	this.setState({loading:false})
+    .then( (response) => {
+    	this.setState({loading: this.state.loading && this.getAvailability_loading })
     	this.getRates_loading = false
     	months_to_fetch_array.forEach( month_index => this.rate_month_data_fetch[month_index] = true  )
     	this.sortRates( response.room_rate_prices, months_to_fetch_array, day_diff )
@@ -232,7 +249,7 @@ class AvailCalendar extends React.PureComponent {
   	} else
   		stitched_new_rates = new_rates
 
-  	this.setState({rates: stitched_new_rates, loading: false }, day_diff?()=> document.getElementById('calendar-body-container').scrollLeft = day_diff*COLUMN_WIDTH:null)
+  	this.setState({rates: stitched_new_rates }, day_diff?()=> document.getElementById('calendar-body-container').scrollLeft = day_diff*COLUMN_WIDTH:null)
   }
 
   getAvailability = (from_date, to_date, months_to_fetch_array) => {
@@ -243,7 +260,7 @@ class AvailCalendar extends React.PureComponent {
       to_date: formatRequestDate(to_date)
     })
       .then((response) => {
-        this.setState({ loading: false })
+        this.setState({ loading: this.state.loading && this.getRates_loading })
     	this.getAvailability_loading = false
         this.sortAvailability(response, months_to_fetch_array)
       })
@@ -376,7 +393,7 @@ class AvailCalendar extends React.PureComponent {
 
 	        	/>
 	        	<div className='right-column'>
-	        		<div className='spacer-1'>
+	        		<div className='left-panel-header'>
 		            <div
 		              onMouseOver={() => this.scrollRight()}
 		              onMouseOut={() => this.onMouseOutRight()}

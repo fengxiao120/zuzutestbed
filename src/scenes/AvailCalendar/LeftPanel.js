@@ -67,7 +67,7 @@ class LeftPanel extends React.PureComponent {
     const { t } = this.props
     return (
         <div className="left-panel">
-          <div className='spacer-1'>
+          <div className='left-panel-header'>
             <div className='update-derived'>
               <div
                 onClick={()=>this.props.onStateToggle('update_derived')}
@@ -128,8 +128,9 @@ class LeftPanel extends React.PureComponent {
             <div className='right-align'>{t('Not available')}</div>
           </div>
 
+          <div>
           {this.props.roomTypes.map((room_type, index) => (
-            <div key={index} className='room-type-with-rate-plans'>
+            <div key={index} className={'room-type-with-rate-plans ' + (room_type.is_child && 'is-child')}>
               <div className='row-name-container'>
                 <div className="row-name room-type">
                   <div className="room-type-name">
@@ -165,6 +166,7 @@ class LeftPanel extends React.PureComponent {
               })}
             </div>
           ))}
+          </div>
         </div>
     )
   }

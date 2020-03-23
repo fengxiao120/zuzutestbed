@@ -73,16 +73,17 @@ class CalendarBody extends React.PureComponent {
           { this.props.headers.map( (day, day_index) => {
             if(this.state.skip_cols>day_index){
               if(!day_index)
-                return (<div style={{minWidth: COLUMN_WIDTH*this.state.skip_cols}}>&nbsp;</div>)
+                return (<div key={day_index} style={{minWidth: COLUMN_WIDTH*this.state.skip_cols}}>&nbsp;</div>)
               else
                 return null
             } else if (this.state.skip_cols + cellsOnScreen<day_index ){
               if(day_index === this.props.headers.length - 1)
-                return (<div style={{minWidth: COLUMN_WIDTH*(day_index - this.state.skip_cols - cellsOnScreen )}}>&nbsp;</div>)
+                return (<div key={day_index} style={{minWidth: COLUMN_WIDTH*(day_index - this.state.skip_cols - cellsOnScreen )}}>&nbsp;</div>)
               else
                 return null      
             } else
               return(<Column
+              key={day_index}
               date={day.date}
               index={day_index}
               isLastColumn={day_index === this.props.headers.length - 1}

@@ -21,8 +21,8 @@ class Column extends React.PureComponent {
         <div className='col-day'>{days[this.props.date.getDay()]}</div>
         <div className='col-date bold'>{this.props.date.getDate()}</div>
         { !!this.props.availability && !!this.props.rates && <React.Fragment>
-          <div className='bold avail-sum'>
-            {availability_sum.available_count}
+          <div className='avail-sum-container'>
+            <div className='avail-sum'>{availability_sum.available_count}</div>
             { this.props.showAvailBreakdown && <React.Fragment>
                 <div className='avail-breakdown'>{availability_sum.sold_count}</div>
                 <div className='avail-breakdown'>{availability_sum.closed_count}</div>
@@ -30,13 +30,12 @@ class Column extends React.PureComponent {
                 </React.Fragment>
             }
           </div>
-          {
-            this.props.roomTypes.map( room_type => {
+          { this.props.roomTypes.map( (room_type, room_type_index) => {
               const avail = this.props.availability.find(avail => avail.room_type_id ===  room_type.room_type_id )
               const rates = this.props.rates.find(rates => rates.room_type_id ===  room_type.room_type_id ) || {rate_plan_prices: []}
               const sold_count = avail && avail.hotel_rate_plans_availabilities.reduce((sum, item) => sum + item.sold_count, 0)
-              return (<React.Fragment>
-                <div className='avail-cell-container'>
+              return (<React.Fragment key={room_type_index}>
+                <div className={'avail-cell-container ' + (!room_type.is_child && 'not-child ') + (!room_type_index && 'is-top')}>
                   <div className={classNames('avail-cell', {
                       'empty': !avail,
                       'stop-sell': avail && !avail.hotel_rate_plans_availabilities.filter(rate_plan_avail => rate_plan_avail.is_allow_to_sell).length
@@ -59,6 +58,7 @@ class Column extends React.PureComponent {
                       return null
                     else
                     return (<div 
+                      key={rate_plan_index}
                       className={classNames('rate-cell', {
                         'empty': !rate_pan_price,
                         'rate-stop-sell': is_stop_sell

@@ -54,7 +54,7 @@
 	width: 320px;
 }
 
-.spacer-1{
+.left-panel-header{
 	height: 50px;
 	line-height: 50px;
 	display: flex;
@@ -77,14 +77,24 @@
 }
 
 .room-type-with-rate-plans{
-	padding-top: 23px;
+	padding-top: 13px;
 	margin-left: 20px;
-	border-right: 1px solid #e7ecf1;
 	border-top: 2px solid #337ab7;
+	margin-top: 40px;
+	border-right: 1px solid #e7ecf1;
+}
+
+.room-type-with-rate-plans:first-child{
+	margin-top: 0;
+}
+
+.room-type-with-rate-plans.is-child{
+	padding-top: 15px;
+	border-top: none;
+	margin-top: 0;
 }
 
 .row-name{
-	padding-right: 10px;
 	display: flex;
 	line-height: 24px;
 	height: 25px;
@@ -92,6 +102,7 @@
 }
 
 .row-name.room-type{
+	padding: 0 4px 0 14px;
 	justify-content: space-between;
 }
 
@@ -114,7 +125,7 @@
 .expand-rate-plan{
 	color: #337ab7;
 	font-weight: bold;
-	width: 4px;
+	width: 8px;
 	text-align: center;
 	box-sizing: content-box;
 	padding-right: 6px;
@@ -192,17 +203,44 @@
 	box-sizing: border-box;	
 }
 
-.avail-cell-container{
-	border-top: 2px solid #337ab7;
+.avail-sum-container{
 	border-right: 1px solid #e7ecf1;
-	border-bottom: 1px solid #e7ecf1;
-	padding: 23px 10px 0;
+}
+
+.avail-sum{
+	line-height: 30px;
 	text-align: right;
+	padding-right: 10px;
+	font-weight: bold;
+}
+
+.avail-cell-container{
+	border-bottom: 1px solid #e7ecf1;
+	border-right: 1px solid #e7ecf1;
+	padding-top: 15px;
+	text-align: right;
+}
+
+.avail-cell-container.not-child{
+	padding-top: 13px;
+	border-top: 2px solid #337ab7;
+	margin-top: 40px;
+}
+
+.avail-cell-container.is-top{
+	margin-top: 0;
 }
 
 .avail-cell{
 	font-weight: bold;
 	box-sizing: border-box;
+	padding-right: 10px;
+}
+
+.avail-breakdown{
+	line-height: 20px;
+	text-align: right;
+	padding-right: 10px;
 }
 
 .empty{
@@ -216,13 +254,6 @@
 .col-date{
 	background: #f9f9f9;
 	padding: 0 10px;
-}
-
-.avail-sum{
-	border-right: 1px solid #e7ecf1;
-	line-height: 30px;
-	text-align: right;
-	padding-right: 10px;
 }
 
 .month-year-in-display{
@@ -258,7 +289,7 @@
 }
 
 .break-down-container{
-	padding-right: 25px;
+	padding-right: 27px;
 	color: #4d4d59; 
 	line-height: 20px;
 	border-right: 1px solid #e7ecf1;
@@ -267,11 +298,6 @@
 .room-type-break-down-container{
 	padding-right: 25px;
 	line-height: 20px;
-}
-
-.avail-breakdown{
-	line-height: 20px;
-	text-align: right;
 }
 
 /*.rate-cell:last-child{
